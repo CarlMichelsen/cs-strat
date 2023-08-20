@@ -48,17 +48,17 @@ builder.Services.AddSwaggerGenWithXmlDocumentation(options =>
 builder.Services.AddEndpointsApiExplorer();
 
 // Configuration
-builder.Configuration.AddJsonFile("secrets.json", false);
+builder.Configuration.AddJsonFile("secrets.json", true);
 
 builder.Services
     .AddOptions<SwaggerOptions>()
-    .Bind(builder.Configuration.GetRequiredSection(SwaggerOptions.SectionName))
+    .Bind(builder.Configuration.GetSection(SwaggerOptions.SectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
 builder.Services
     .AddOptions<JwtOptions>()
-    .Bind(builder.Configuration.GetRequiredSection(JwtOptions.SectionName))
+    .Bind(builder.Configuration.GetSection(JwtOptions.SectionName))
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
