@@ -1,0 +1,26 @@
+# Top-most EditorConfig file
+root = true
+
+# Generic rules
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Remove the warning about the file header
+dotnet_diagnostic.SA1633.severity = none
+
+# Remove the warning about trailing whitespace
+dotnet_diagnostic.SA1028.severity = none
+
+# Remove the warning about using statements inside namespace
+dotnet_diagnostic.SA1200.severity = none
+
+# Remove CSharp rule forces space between new and ()
+dotnet_diagnostic.SA1000.severity = none
+
+# Don't forget blank lines in Program.cs, for some reason stylecop thinks this warning originates from Api.csproj
+# dotnet_diagnostic.SA1516.severity = none

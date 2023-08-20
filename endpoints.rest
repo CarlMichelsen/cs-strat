@@ -1,0 +1,41 @@
+@hostname = localhost
+@port = 5207
+@uniqueHumanReadableIdentifier = job-length
+@username = Carl
+@cookieName = auth
+@cookieValue = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InVzZXIiLCJuYW1laWQiOiJlZGIxYjFmNC0xMGIyLTQ4YmYtYTA4My02ODFhODFlYTJmNDkiLCJnaXZlbl9uYW1lIjoiQ2FybCIsInJvbGUiOiJ1c2VyIiwibmJmIjoxNjkyNTQwMzQ1LCJleHAiOjE2OTM3NDk5NDUsImlhdCI6MTY5MjU0MDM0NSwiaXNzIjoic3RyYXQuY3VycmVudGNhcGl0YWxpc20uY29tIiwiYXVkIjoic3RyYXQuY3VycmVudGNhcGl0YWxpc20uY29tIn0.aC27yWGvrv5Qjqkb6_3Qevg9V7DECXprVBHA5N57mHvY_imm39cZomY9ZIhBspTfsKCMF7IaI8ksyPBBkiU7Zw
+
+### Register a User
+POST http://{{hostname}}:{{port}}/User
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "{{username}}"
+}
+###
+
+### Get User Information (from cookie)
+GET http://{{hostname}}:{{port}}/User
+Accept: application/json
+Cookie: {{cookieName}}={{cookieValue}}
+###
+
+### Create a new Lobby (creator from cookie)
+POST http://{{hostname}}:{{port}}/Lobby
+Accept: application/json
+Cookie: {{cookieName}}={{cookieValue}}
+###
+
+### Retrieve a Lobby by its Unique Human Readable Identifier
+GET http://{{hostname}}:{{port}}/Lobby/{{uniqueHumanReadableIdentifier}}
+Accept: application/json
+Cookie: {{cookieName}}={{cookieValue}}
+###
+
+### Join an existing Lobby (joiner from cookie)
+PUT http://{{hostname}}:{{port}}/Lobby/{{uniqueHumanReadableIdentifier}}
+Accept: application/json
+Cookie: {{cookieName}}={{cookieValue}}
+###
+
