@@ -37,11 +37,6 @@ public class UserController : ControllerBase
     {
         var lobbyResponse = this.userHandler.Register(user, this.HttpContext.User, this.Response.Cookies);
 
-        if (!lobbyResponse.Ok)
-        {
-            return this.BadRequest(lobbyResponse);
-        }
-
         return this.Ok(lobbyResponse);
     }
 
@@ -54,11 +49,6 @@ public class UserController : ControllerBase
     public ActionResult<ServiceResponse<UserDto>> WhoAmI()
     {
         var lobbyResponse = this.userHandler.WhoAmI(this.HttpContext.User);
-
-        if (!lobbyResponse.Ok)
-        {
-            return this.BadRequest(lobbyResponse);
-        }
 
         return this.Ok(lobbyResponse);
     }

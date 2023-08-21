@@ -38,11 +38,6 @@ public class LobbyController : ControllerBase
         var lobbyResponse = await this.lobbyHandler
             .CreateLobby(creatorGuid);
 
-        if (!lobbyResponse.Ok)
-        {
-            return this.BadRequest(lobbyResponse);
-        }
-
         return lobbyResponse;
     }
 
@@ -57,11 +52,6 @@ public class LobbyController : ControllerBase
     {
         var lobbyResponse = await this.lobbyHandler
             .GetLobby(uniqueHumanReadableIdentifier);
-
-        if (!lobbyResponse.Ok)
-        {
-            return this.NotFound(lobbyResponse);
-        }
 
         return lobbyResponse;
     }
@@ -80,11 +70,6 @@ public class LobbyController : ControllerBase
         var lobbyResponse = await this.lobbyHandler
             .JoinLobby(uniqueHumanReadableIdentifier, joinerGuid);
 
-        if (!lobbyResponse.Ok)
-        {
-            return this.NotFound(lobbyResponse);
-        }
-
         return lobbyResponse;
     }
 
@@ -92,6 +77,7 @@ public class LobbyController : ControllerBase
     {
         var claimValue = this.HttpContext.User.Claims
             .First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
         return Guid.Parse(claimValue);
     }
 }
