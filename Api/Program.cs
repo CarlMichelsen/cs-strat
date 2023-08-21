@@ -92,6 +92,18 @@ builder.Services
         };
     });
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendAllowed", builder =>
+    {
+        builder.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 builder.Services
     .AddAuthorization();
 
@@ -109,6 +121,8 @@ if (app.Environment.IsDevelopment() || swaggerOptions!.Value.Enabled)
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("FrontendAllowed");
 
 app.UseMiddleware<CookieMiddleware>();
 
