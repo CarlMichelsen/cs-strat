@@ -3,7 +3,7 @@ namespace Domain.Attribute;
 /// <summary>
 /// Swagger DisplaynameAttribute.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true)]
 public class DtoDisplayNameAttribute : System.Attribute
 {
     /// <summary>

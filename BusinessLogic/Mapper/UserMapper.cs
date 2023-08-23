@@ -2,12 +2,12 @@ using System.Security.Claims;
 using Domain.Dto;
 using Domain.Lobby;
 
-namespace Businesslogic.Mapper;
+namespace BusinessLogic.Mapper;
 
 /// <summary>
 /// Mapper for users.
 /// </summary>
-public static class UserDtoMapper
+public static class UserMapper
 {
     /// <summary>
     /// Maps a userDto to a user with a new random Guid.

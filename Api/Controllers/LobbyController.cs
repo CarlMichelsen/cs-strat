@@ -1,4 +1,4 @@
-using System.Security.Claims;
+using Api.Extension;
 using Domain.Dto;
 using Interface.Handler;
 using Microsoft.AspNetCore.Authorization;
@@ -31,27 +31,12 @@ public class LobbyController : ControllerBase
     /// </summary>
     /// <returns>LobbyData.</returns>
     [HttpPost]
-    public async Task<ActionResult<ServiceResponse<LobbyDataDto>>> CreateLobby()
+    public async Task<ActionResult<ServiceResponse<string>>> CreateLobby()
     {
-        Guid creatorGuid = this.GetIdentifierFromUser();
+        var creator = this.HttpContext.User.GetUserModel();
 
         var lobbyResponse = await this.lobbyHandler
-            .CreateLobby(creatorGuid);
-
-        return lobbyResponse;
-    }
-
-    /// <summary>
-    /// Get an exsisting lobby.
-    /// </summary>
-    /// <param name="uniqueHumanReadableIdentifier">Unique human readable lobby-identifier.</param>
-    /// <returns>LobbyData.</returns>
-    [HttpGet("{uniqueHumanReadableIdentifier}")]
-    public async Task<ActionResult<ServiceResponse<LobbyDataDto>>> GetLobby(
-        [FromRoute] string uniqueHumanReadableIdentifier)
-    {
-        var lobbyResponse = await this.lobbyHandler
-            .GetLobby(uniqueHumanReadableIdentifier);
+            .CreateLobby(creator.Id);
 
         return lobbyResponse;
     }
@@ -62,22 +47,14 @@ public class LobbyController : ControllerBase
     /// <param name="uniqueHumanReadableIdentifier">Unique human readable lobby-identifier.</param>
     /// <returns>LobbyData.</returns>
     [HttpPut("{uniqueHumanReadableIdentifier}")]
-    public async Task<ActionResult<ServiceResponse<LobbyDataDto>>> JoinLobby(
+    public async Task<ActionResult<ServiceResponse<string>>> JoinLobby(
         [FromRoute] string uniqueHumanReadableIdentifier)
     {
-        Guid joinerGuid = this.GetIdentifierFromUser();
+        var joiner = this.HttpContext.User.GetUserModel();
 
         var lobbyResponse = await this.lobbyHandler
-            .JoinLobby(uniqueHumanReadableIdentifier, joinerGuid);
+            .JoinLobby(uniqueHumanReadableIdentifier, joiner.Id);
 
         return lobbyResponse;
-    }
-
-    private Guid GetIdentifierFromUser()
-    {
-        var claimValue = this.HttpContext.User.Claims
-            .First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-
-        return Guid.Parse(claimValue);
     }
 }

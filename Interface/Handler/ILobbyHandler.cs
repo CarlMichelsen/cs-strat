@@ -12,14 +12,7 @@ public interface ILobbyHandler
     /// </summary>
     /// <param name="creator">Guid id of the creator.</param>
     /// <returns>LobbyDto.</returns>
-    Task<ServiceResponse<LobbyDataDto>> CreateLobby(Guid creator);
-
-    /// <summary>
-    /// Gets a lobby from human readable id.
-    /// </summary>
-    /// <param name="uniqueHumanReadableIdentifier">Human readable id.</param>
-    /// <returns>LobbyDto.</returns>
-    Task<ServiceResponse<LobbyDataDto>> GetLobby(string uniqueHumanReadableIdentifier);
+    Task<ServiceResponse<string>> CreateLobby(Guid creator);
 
     /// <summary>
     /// Joins a lobby.
@@ -27,5 +20,5 @@ public interface ILobbyHandler
     /// <param name="uniqueHumanReadableIdentifier">Lobby to join.</param>
     /// <param name="user">Joining user-id.</param>
     /// <returns>LobbyDto.</returns>
-    Task<ServiceResponse<LobbyDataDto>> JoinLobby(string uniqueHumanReadableIdentifier, Guid user);
+    Task<ServiceResponse<string>> JoinLobby(string uniqueHumanReadableIdentifier, Guid user);
 }

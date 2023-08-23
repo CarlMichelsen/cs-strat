@@ -3,7 +3,7 @@ using Domain.Exception;
 using Interface.Repository;
 using Interface.Service;
 
-namespace Businesslogic.Service;
+namespace BusinessLogic.Service;
 
 /// <inheritdoc />
 public class HumanReadableIdentifierService : IHumanReadableIdentifierService
@@ -82,14 +82,14 @@ public class HumanReadableIdentifierService : IHumanReadableIdentifierService
         "queen", "ratio",
     };
 
-    private readonly ILobbyRepository lobbyRepository;
+    private readonly ILobbyAccessRepository lobbyRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HumanReadableIdentifierService"/> class.
     /// </summary>
     /// <param name="lobbyRepository">Lobby repository.</param>
     public HumanReadableIdentifierService(
-        ILobbyRepository lobbyRepository)
+        ILobbyAccessRepository lobbyRepository)
     {
         this.lobbyRepository = lobbyRepository;
     }
@@ -99,7 +99,7 @@ public class HumanReadableIdentifierService : IHumanReadableIdentifierService
     {
         var random = new Random();
         string nonUniqueIdentifier;
-        Lobby? exsistingLobby = default;
+        LobbyAccess? exsistingLobby = default;
         var counter = 0;
 
         do

@@ -1,7 +1,7 @@
 using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Businesslogic.Database;
+namespace BusinessLogic.Database;
 
 /// <summary>
 /// EntityFramework application context.
@@ -21,5 +21,5 @@ public class ApplicationContext : DbContext
     /// Gets or sets lobby DbSet for access to lobbies in database.
     /// </summary>
     /// <value>Lobby DbSet.</value>
-    required public DbSet<Lobby> Lobby { get; set; }
+    required public DbSet<LobbyAccess> Lobby { get; set; }
 }

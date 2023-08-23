@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Businesslogic.Mapper;
+using BusinessLogic.Mapper;
 using Domain.Configuration;
 using Domain.Dto;
 using Interface.Handler;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Businesslogic.Handler;
+namespace BusinessLogic.Handler;
 
 /// <inheritdoc />
 public class UserHandler : BaseHandler, IUserHandler
@@ -38,7 +38,7 @@ public class UserHandler : BaseHandler, IUserHandler
     {
         return this.MapToServiceResponseSync<UserDto>(this.logger, () =>
         {
-            var domainUser = UserDtoMapper.MapWithExsistingOrNewGuid(user, claimsPrincipal);
+            var domainUser = UserMapper.MapWithExsistingOrNewGuid(user, claimsPrincipal);
 
             var token = this.jwtService.GenerateJwtToken(domainUser);
 
@@ -48,14 +48,14 @@ public class UserHandler : BaseHandler, IUserHandler
                 token,
                 this.GetCookieOptions());
 
-            return UserDtoMapper.Map(domainUser);
+            return UserMapper.Map(domainUser);
         });
     }
 
     /// <inheritdoc />
     public ServiceResponse<UserDto> WhoAmI(ClaimsPrincipal claimsPrincipal)
     {
-        return this.MapToServiceResponseSync<UserDto>(this.logger, () => UserDtoMapper.Map(UserDtoMapper.Map(claimsPrincipal)));
+        return this.MapToServiceResponseSync<UserDto>(this.logger, () => UserMapper.Map(UserMapper.Map(claimsPrincipal)));
     }
 
     private CookieOptions GetCookieOptions()

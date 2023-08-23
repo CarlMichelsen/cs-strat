@@ -2,12 +2,12 @@ using Domain.Entity;
 using Interface.Repository;
 using Interface.Service;
 
-namespace Businesslogic.Service;
+namespace BusinessLogic.Service;
 
 /// <inheritdoc />
 public class LobbyService : ILobbyService
 {
-    private readonly ILobbyRepository lobbyRepository;
+    private readonly ILobbyAccessRepository lobbyRepository;
     private readonly IHumanReadableIdentifierService humanReadableIdentifierService;
 
     /// <summary>
@@ -16,7 +16,7 @@ public class LobbyService : ILobbyService
     /// <param name="lobbyRepository">Lobby repository.</param>
     /// <param name="humanReadableIdentifierService">Human readable identifier service.</param>
     public LobbyService(
-        ILobbyRepository lobbyRepository,
+        ILobbyAccessRepository lobbyRepository,
         IHumanReadableIdentifierService humanReadableIdentifierService)
     {
         this.lobbyRepository = lobbyRepository;
@@ -24,15 +24,15 @@ public class LobbyService : ILobbyService
     }
 
     /// <inheritdoc />
-    public Task<Lobby> ClearUniqueHumanReadableIdentifier(string uniqueHumanReadableIdentifier)
+    public Task<LobbyAccess> ClearUniqueHumanReadableIdentifier(string uniqueHumanReadableIdentifier)
     {
         return this.lobbyRepository.ClearUniqueHumanReadableIdentifier(uniqueHumanReadableIdentifier);
     }
 
     /// <inheritdoc />
-    public async Task<Lobby> CreateLobby(Guid creator)
+    public async Task<LobbyAccess> CreateLobby(Guid creator)
     {
-        var lobby = new Lobby
+        var lobby = new LobbyAccess
         {
             UniqueHumanReadableIdentifier = await this.humanReadableIdentifierService.GenerateUniqueIdentifier(),
             Creator = creator,
@@ -45,13 +45,13 @@ public class LobbyService : ILobbyService
     }
 
     /// <inheritdoc />
-    public Task<Lobby> GetLobby(string uniqueHumanReadableIdentifier)
+    public Task<LobbyAccess> GetLobby(string uniqueHumanReadableIdentifier)
     {
         return this.lobbyRepository.GetLobby(uniqueHumanReadableIdentifier);
     }
 
     /// <inheritdoc />
-    public Task<Lobby> JoinLobby(string uniqueHumanReadableIdentifier, Guid user)
+    public Task<LobbyAccess> JoinLobby(string uniqueHumanReadableIdentifier, Guid user)
     {
         return this.lobbyRepository.JoinLobby(uniqueHumanReadableIdentifier, user);
     }

@@ -2,13 +2,15 @@ using System.Text;
 using Api.Extension;
 using Api.Hubs;
 using Api.Middleware;
-using Businesslogic.Database;
-using Businesslogic.Handler;
-using Businesslogic.Repository;
-using Businesslogic.Service;
+using BusinessLogic.Database;
+using BusinessLogic.Handler;
+using BusinessLogic.Repository;
+using BusinessLogic.LobbyManagement;
+using BusinessLogic.Service;
 using Domain.Configuration;
 using Interface.Handler;
 using Interface.Repository;
+using Interface.LobbyManagement;
 using Interface.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -31,11 +33,17 @@ builder.Services
     .AddTransient<IHumanReadableIdentifierService, HumanReadableIdentifierService>()
     .AddTransient<IJwtService, JwtService>()
     .AddTransient<ILobbyService, LobbyService>()
+    .AddTransient<ILobbyAuthService, LobbyAuthService>()
     .AddSignalR();
+
+// Lobby Management
+builder.Services
+    .AddTransient<ILobbyStateMachine, LobbyStateMachine>()
+    .AddTransient<ILobbyManager, LobbyManager>();
 
 // Repository
 builder.Services
-    .AddTransient<ILobbyRepository, LobbyRepository>();
+    .AddTransient<ILobbyAccessRepository, LobbyAccessRepository>();
 
 // Middleware
 builder.Services
@@ -43,7 +51,10 @@ builder.Services
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGenWithXmlDocumentation(options =>
-    options.CustomSchemaIds(SwaggerExtension.GetSchemaIdRecursively));
+{
+    options.DocumentFilter<SignalRDocumentFilter>();
+    options.CustomSchemaIds(SwaggerExtension.GetSchemaIdRecursively);
+});
 
 builder.Services.AddEndpointsApiExplorer();
 

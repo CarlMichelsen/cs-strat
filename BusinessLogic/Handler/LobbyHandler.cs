@@ -1,11 +1,10 @@
-using Businesslogic.Mapper;
+using BusinessLogic.Mapper;
 using Domain.Dto;
-using Domain.Exception;
 using Interface.Handler;
 using Interface.Service;
 using Microsoft.Extensions.Logging;
 
-namespace Businesslogic.Handler;
+namespace BusinessLogic.Handler;
 
 /// <inheritdoc />
 public class LobbyHandler : BaseHandler, ILobbyHandler
@@ -27,32 +26,32 @@ public class LobbyHandler : BaseHandler, ILobbyHandler
     }
 
     /// <inheritdoc />
-    public Task<ServiceResponse<LobbyDataDto>> CreateLobby(Guid creator)
+    public Task<ServiceResponse<string>> CreateLobby(Guid creator)
     {
-        return this.MapToServiceResponse<LobbyDataDto>(this.logger, async () =>
+        return this.MapToServiceResponse<string>(this.logger, async () =>
         {
             var lobby = await this.lobbyService.CreateLobby(creator);
-            return LobbyDataDtoMapper.Map(lobby);
+            if (lobby.UniqueHumanReadableIdentifier is null)
+            {
+                throw new NullReferenceException("UniqueHumanReadableIdentifier null");
+            }
+
+            return lobby.UniqueHumanReadableIdentifier;
         });
     }
 
     /// <inheritdoc />
-    public Task<ServiceResponse<LobbyDataDto>> GetLobby(string uniqueHumanReadableIdentifier)
+    public Task<ServiceResponse<string>> JoinLobby(string uniqueHumanReadableIdentifier, Guid user)
     {
-        return this.MapToServiceResponse<LobbyDataDto>(this.logger, async () =>
-        {
-            var lobby = await this.lobbyService.GetLobby(uniqueHumanReadableIdentifier);
-            return LobbyDataDtoMapper.Map(lobby);
-        });
-    }
-
-    /// <inheritdoc />
-    public Task<ServiceResponse<LobbyDataDto>> JoinLobby(string uniqueHumanReadableIdentifier, Guid user)
-    {
-        return this.MapToServiceResponse<LobbyDataDto>(this.logger, async () =>
+        return this.MapToServiceResponse<string>(this.logger, async () =>
         {
             var lobby = await this.lobbyService.JoinLobby(uniqueHumanReadableIdentifier, user);
-            return LobbyDataDtoMapper.Map(lobby);
+            if (lobby.UniqueHumanReadableIdentifier is null)
+            {
+                throw new NullReferenceException("UniqueHumanReadableIdentifier null");
+            }
+
+            return lobby.UniqueHumanReadableIdentifier;
         });
     }
 }

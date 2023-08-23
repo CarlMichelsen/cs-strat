@@ -6,7 +6,7 @@ namespace Domain.Entity;
 /// <summary>
 /// Lobby database entity.
 /// </summary>
-public class Lobby
+public class LobbyAccess
 {
     private const string Separator = ",";
 
@@ -16,7 +16,7 @@ public class Lobby
     /// <value>Integer primary key value.</value>
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
     /// Gets or sets unique human readable identifier used by users to join a lobby.
@@ -29,7 +29,7 @@ public class Lobby
     /// Gets or sets user that created the lobby.
     /// </summary>
     /// <value>Creator user.</value>
-    required public Guid Creator { get; set; }
+    required public Guid Creator { get; init; }
 
     /// <summary>
     /// Gets or sets current in game leader user.

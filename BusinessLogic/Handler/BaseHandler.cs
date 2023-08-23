@@ -2,7 +2,7 @@ using Domain.Dto;
 using Domain.Exception;
 using Microsoft.Extensions.Logging;
 
-namespace Businesslogic.Handler;
+namespace BusinessLogic.Handler;
 
 /// <summary>
 /// Contains common methods useful in handlers.

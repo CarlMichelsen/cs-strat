@@ -7,7 +7,7 @@ using Interface.Service;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Businesslogic.Service;
+namespace BusinessLogic.Service;
 
 /// <inheritdoc />
 public class JwtService : IJwtService
