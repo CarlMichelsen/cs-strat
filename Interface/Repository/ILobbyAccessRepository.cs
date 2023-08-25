@@ -19,7 +19,7 @@ public interface ILobbyAccessRepository
     /// </summary>
     /// <param name="uniqueHumanReadableIdentifier">Identifier for lobby.</param>
     /// <returns>The created lobby.</returns>
-    Task<LobbyAccess> GetLobby(string uniqueHumanReadableIdentifier);
+    Task<LobbyAccess?> GetLobby(string uniqueHumanReadableIdentifier);
 
     /// <summary>
     /// Join a lobby by uniqueHumanReadableIdentifier.
@@ -27,7 +27,7 @@ public interface ILobbyAccessRepository
     /// <param name="uniqueHumanReadableIdentifier">Lobby identifier.</param>
     /// <param name="user">Joining user guid.</param>
     /// <returns>Lobby, post joining.</returns>
-    Task<LobbyAccess> JoinLobby(string uniqueHumanReadableIdentifier, Guid user);
+    Task<LobbyAccess?> JoinLobby(string uniqueHumanReadableIdentifier, Guid user);
 
     /// <summary>
     /// Set UniqueHumanReadableIdentifier to null, allowing new lobbies to use it.
@@ -35,5 +35,5 @@ public interface ILobbyAccessRepository
     /// </summary>
     /// <param name="uniqueHumanReadableIdentifier">Get lobby by uniqueHumanReadableIdentifier to clear uniqueHumanReadableIdentifier.</param>
     /// <returns>Lobby post removal of uniqueHumanReadableIdentifier.</returns>
-    Task<LobbyAccess> ClearUniqueHumanReadableIdentifier(string uniqueHumanReadableIdentifier);
+    Task<LobbyAccess?> ClearUniqueHumanReadableIdentifier(string uniqueHumanReadableIdentifier);
 }

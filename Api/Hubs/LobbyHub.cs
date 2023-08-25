@@ -18,21 +18,25 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
     private readonly ILogger<LobbyHub> logger;
     private readonly ILobbyAuthService lobbyAuthService;
     private readonly ILobbyManager lobbyManager;
+    private readonly ILobbyStateMachine lobbyStateMachine;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LobbyHub"/> class.
     /// </summary>
     /// <param name="logger">For error logging.</param>
     /// <param name="lobbyAuthService">Service for handling authentication and authorization for user joining lobby.</param>
-    /// <param name="lobbyManager">For error logging.</param>
+    /// <param name="lobbyManager">Manages lobbies.</param>
+    /// <param name="lobbyStateMachine">Statemachine for altering lobbies.</param>
     public LobbyHub(
         ILogger<LobbyHub> logger,
         ILobbyAuthService lobbyAuthService,
-        ILobbyManager lobbyManager)
+        ILobbyManager lobbyManager,
+        ILobbyStateMachine lobbyStateMachine)
     {
         this.logger = logger;
         this.lobbyAuthService = lobbyAuthService;
         this.lobbyManager = lobbyManager;
+        this.lobbyStateMachine = lobbyStateMachine;
     }
 
     /// <inheritdoc />
@@ -47,20 +51,19 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
         }
         catch (LobbyAuthException e)
         {
-            this.logger.LogInformation("A user attempted to connect to the lobby but got the following {}: {}",
-                nameof(LobbyAuthException), e.Message);
+            this.logger.LogInformation("{}: {}", nameof(LobbyAuthException), e.Message);
             this.Context.Abort();
             return;
         }
         catch (System.Exception e)
         {
-            this.logger.LogError("An unhandled exception was thrown attempting to connect with the message {}",
-                e.Message);
+            this.logger.LogError("Fatal Error {}", e.Message);
             this.Context.Abort();
             return;
         }
 
-        Context.Items.Add(nameof(UserConnectionContext), connectionContext);
+        // Add UserContext
+        this.Context.Items.Add(nameof(UserConnectionContext), connectionContext);
 
         var activeLobby = this.lobbyManager.GetActiveLobby(connectionContext.LobbyId);
         if (activeLobby is null)
@@ -72,13 +75,39 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
 
         var groupName = activeLobby.Id.ToString();
 
+        var connectedUserDto = ActiveLobbyMapper.Map(activeLobby.Members[connectionContext.User.Id]!);
+        await this.Clients.Group(groupName).User(connectedUserDto);
+
         await this.Groups.AddToGroupAsync(this.Context.ConnectionId, groupName);
         await this.Clients.Group(groupName).Lobby(ActiveLobbyMapper.Map(activeLobby));
     }
 
     /// <inheritdoc />
-    public override Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        return Task.CompletedTask;
+        var activeLobby = this.lobbyManager.GetActiveLobby(this.UserContext.LobbyId);
+        if (activeLobby is not null)
+        {
+            var changedUser = this.lobbyStateMachine
+                .UserDisconnected(activeLobby, this.UserContext.User);
+
+            if (changedUser is not null)
+            {
+                var changedUserDto = ActiveLobbyMapper.Map(changedUser);
+                await this.Clients.Group(this.UserContext.LobbyId.ToString()).User(changedUserDto);
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task Message(string message)
+    {
+        await this.Clients.Group(this.UserContext.LobbyId.ToString())
+            .MessageReceieved(UserMapper.Map(this.UserContext.User), message);
+    }
+
+    private UserConnectionContext UserContext
+    {
+        get => (this.Context.Items[nameof(UserConnectionContext)] as UserConnectionContext)!;
     }
 }

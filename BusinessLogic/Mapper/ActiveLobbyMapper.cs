@@ -18,6 +18,28 @@ public static class ActiveLobbyMapper
     {
         return new ActiveLobbyDto
         {
+            UniqueHumanReadableIdentifier = activeLobby.UniqueHumanReadableIdentifier,
+            Creator = activeLobby.Creator,
+            InGameLeader = activeLobby.InGameLeader,
+            Members = activeLobby.Members.ToDictionary(
+                pair => pair.Key,
+                pair => Map(pair.Value)
+            ),
+            CreatedTime = activeLobby.CreatedTime,
+        };
+    }
+
+    /// <summary>
+    /// Map MetaUser to MetaUserDto.
+    /// </summary>
+    /// <param name="metaUser">MetaUser to map.</param>
+    /// <returns>MetaUserDto.</returns>
+    public static MetaUserDto Map(MetaUser metaUser)
+    {
+        return new MetaUserDto
+        {
+            Online = metaUser.Online,
+            User = UserMapper.Map(metaUser.User),
         };
     }
 
@@ -34,7 +56,7 @@ public static class ActiveLobbyMapper
             UniqueHumanReadableIdentifier = lobbyAccess.UniqueHumanReadableIdentifier
                 ?? throw new NullReferenceException("lobbyAccess.UniqueHumanReadableIdentifier is null during mapping."),
             Creator = lobbyAccess.Creator,
-            InGameLeader = lobbyAccess.InGameLeader,
+            InGameLeader = lobbyAccess.Creator,
             Members = new Dictionary<Guid, MetaUser>(),
             CreatedTime = lobbyAccess.CreatedTime,
         };

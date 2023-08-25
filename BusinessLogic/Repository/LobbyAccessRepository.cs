@@ -1,6 +1,5 @@
 using BusinessLogic.Database;
 using Domain.Entity;
-using Domain.Exception;
 using Interface.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,20 +23,17 @@ public class LobbyAccessRepository : ILobbyAccessRepository
     }
 
     /// <inheritdoc />
-    public async Task<LobbyAccess> ClearUniqueHumanReadableIdentifier(string uniqueHumanReadableIdentifier)
+    public async Task<LobbyAccess?> ClearUniqueHumanReadableIdentifier(string uniqueHumanReadableIdentifier)
     {
         var lobby = await this.applicationContext.Lobby
             .Where(l => l.UniqueHumanReadableIdentifier == uniqueHumanReadableIdentifier)
             .FirstOrDefaultAsync();
 
-        if (lobby is null)
+        if (lobby is not null)
         {
-            throw new RepositoryException(NotFoundExceptionText);
+            lobby.UniqueHumanReadableIdentifier = null;
+            await this.applicationContext.SaveChangesAsync();
         }
-
-        lobby.UniqueHumanReadableIdentifier = null;
-
-        await this.applicationContext.SaveChangesAsync();
 
         return lobby;
     }
@@ -53,26 +49,21 @@ public class LobbyAccessRepository : ILobbyAccessRepository
     }
 
     /// <inheritdoc />
-    public async Task<LobbyAccess> GetLobby(string uniqueHumanReadableIdentifier)
+    public async Task<LobbyAccess?> GetLobby(string uniqueHumanReadableIdentifier)
     {
         return await this.applicationContext.Lobby
-            .FirstOrDefaultAsync(l => l.UniqueHumanReadableIdentifier == uniqueHumanReadableIdentifier)
-                ?? throw new RepositoryException(NotFoundExceptionText);
+            .FirstOrDefaultAsync(l => l.UniqueHumanReadableIdentifier == uniqueHumanReadableIdentifier);
     }
 
     /// <inheritdoc />
-    public async Task<LobbyAccess> JoinLobby(string uniqueHumanReadableIdentifier, Guid user)
+    public async Task<LobbyAccess?> JoinLobby(string uniqueHumanReadableIdentifier, Guid user)
     {
         var lobby = await this.GetLobby(uniqueHumanReadableIdentifier);
 
-        if (!lobby.Members.Any(u => u == user))
+        if (lobby is not null && !lobby.Members.Any(u => u == user))
         {
             lobby.Members.Add(user);
             await this.applicationContext.SaveChangesAsync();
-        }
-        else
-        {
-            throw new RepositoryException("User is already in the lobby");
         }
 
         return lobby;

@@ -2,7 +2,7 @@ namespace Domain.Lobby;
 
 /// <summary>
 /// Model that represents a lobby inside a signalR hub.
-/// The data in this lobby si volatile and will be lost when leaving memory.
+/// The data in this lobby is volatile and will be lost when leaving memory.
 /// </summary>
 public class ActiveLobby
 {

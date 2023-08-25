@@ -32,13 +32,6 @@ public class LobbyAccess
     required public Guid Creator { get; init; }
 
     /// <summary>
-    /// Gets or sets current in game leader user.
-    /// This should the creator by default.
-    /// </summary>
-    /// <value>In game leader user.</value>
-    required public Guid InGameLeader { get; set; }
-
-    /// <summary>
     /// Gets members of the lobby in serialized format, as it would be stored in the database.
     /// </summary>
     /// <value>Member guids in a string.</value>

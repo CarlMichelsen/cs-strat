@@ -50,7 +50,7 @@ public class LobbyAuthService : ILobbyAuthService
 
         var lobbyId = this.GetHandshakeLobbyId(queryCollection);
 
-        var lobbyAccess = await lobbyAccessRepository
+        var lobbyAccess = await this.lobbyAccessRepository
             .GetLobby(lobbyId);
 
         if (lobbyAccess is null)
@@ -83,7 +83,7 @@ public class LobbyAuthService : ILobbyAuthService
             lobbyId = lobbyIdStringValue.FirstOrDefault();
         }
 
-        if (lobbyId is null)
+        if (string.IsNullOrWhiteSpace(lobbyId))
         {
             throw new LobbyAuthException($"{LobbyIdQueryName} not found in query parameters");
         }

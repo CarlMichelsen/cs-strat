@@ -24,7 +24,7 @@ public class LobbyService : ILobbyService
     }
 
     /// <inheritdoc />
-    public Task<LobbyAccess> ClearUniqueHumanReadableIdentifier(string uniqueHumanReadableIdentifier)
+    public Task<LobbyAccess?> ClearUniqueHumanReadableIdentifier(string uniqueHumanReadableIdentifier)
     {
         return this.lobbyRepository.ClearUniqueHumanReadableIdentifier(uniqueHumanReadableIdentifier);
     }
@@ -36,22 +36,23 @@ public class LobbyService : ILobbyService
         {
             UniqueHumanReadableIdentifier = await this.humanReadableIdentifierService.GenerateUniqueIdentifier(),
             Creator = creator,
-            InGameLeader = creator,
             Members = new List<Guid> { creator },
             CreatedTime = DateTime.UtcNow,
         };
 
-        return await this.lobbyRepository.CreateLobby(lobby);
+        var test = await this.lobbyRepository.CreateLobby(lobby);
+
+        return test;
     }
 
     /// <inheritdoc />
-    public Task<LobbyAccess> GetLobby(string uniqueHumanReadableIdentifier)
+    public Task<LobbyAccess?> GetLobby(string uniqueHumanReadableIdentifier)
     {
         return this.lobbyRepository.GetLobby(uniqueHumanReadableIdentifier);
     }
 
     /// <inheritdoc />
-    public Task<LobbyAccess> JoinLobby(string uniqueHumanReadableIdentifier, Guid user)
+    public Task<LobbyAccess?> JoinLobby(string uniqueHumanReadableIdentifier, Guid user)
     {
         return this.lobbyRepository.JoinLobby(uniqueHumanReadableIdentifier, user);
     }

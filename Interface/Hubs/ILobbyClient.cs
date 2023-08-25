@@ -15,4 +15,19 @@ public interface ILobbyClient
     /// <param name="lobby">Lobby object.</param>
     /// <returns>Task.</returns>
     Task Lobby(ActiveLobbyDto lobby);
+
+    /// <summary>
+    /// Receieve message from another member of the lobby.
+    /// </summary>
+    /// <param name="sender">User sender.</param>
+    /// <param name="message">String message.</param>
+    /// <returns>Task.</returns>
+    Task MessageReceieved(UserDto sender, string message);
+
+    /// <summary>
+    /// When new users join or exsisting users change online state or name.
+    /// </summary>
+    /// <param name="metaUser">Wrapper object with a user in it.</param>
+    /// <returns>MetaUser.</returns>
+    Task User(MetaUserDto metaUser);
 }

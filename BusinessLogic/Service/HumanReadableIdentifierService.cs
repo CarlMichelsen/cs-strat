@@ -105,11 +105,8 @@ public class HumanReadableIdentifierService : IHumanReadableIdentifierService
         do
         {
             nonUniqueIdentifier = this.RandomHumanReadableIdentifier(random);
-            try
-            {
-                exsistingLobby = await this.lobbyRepository.GetLobby(nonUniqueIdentifier);
-            }
-            catch (RepositoryException)
+            exsistingLobby = await this.lobbyRepository.GetLobby(nonUniqueIdentifier);
+            if (exsistingLobby is null)
             {
                 counter++;
                 if (counter > MaxAllowedGeneratorAttempts)

@@ -1,6 +1,38 @@
 namespace Domain.Dto;
 
+/// <summary>
+/// Model that represents a lobby inside a signalR hub.
+/// </summary>
 public class ActiveLobbyDto
 {
+    /// <summary>
+    /// Gets or sets unique human readable identifier used by users to join a lobby.
+    /// </summary>
+    /// <value>String unique human readable identifier.</value>
+    required public string UniqueHumanReadableIdentifier { get; set; }
 
+    /// <summary>
+    /// Gets or sets id of user that created the lobby.
+    /// </summary>
+    /// <value>Creator user.</value>
+    required public Guid Creator { get; init; }
+
+    /// <summary>
+    /// Gets or sets current in game leader user id.
+    /// This should the creator by default.
+    /// </summary>
+    /// <value>In game leader user.</value>
+    required public Guid InGameLeader { get; set; }
+
+    /// <summary>
+    /// Dictionary of users currently connected to the
+    /// </summary>
+    /// <value></value>
+    required public Dictionary<Guid, MetaUserDto> Members { get; init; }
+
+    /// <summary>
+    /// Gets or sets time the lobby was created.
+    /// </summary>
+    /// <value>Created time.</value>
+    required public DateTime CreatedTime { get; set; }
 }

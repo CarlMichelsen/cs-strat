@@ -17,6 +17,15 @@ public class ApplicationContext : DbContext
     {
     }
 
+    /// <inheritdoc />
+    protected override void OnModelCreating(
+        ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<LobbyAccess>()
+            .Property(f => f.Id)
+            .ValueGeneratedOnAdd();
+    }
+
     /// <summary>
     /// Gets or sets lobby DbSet for access to lobbies in database.
     /// </summary>
