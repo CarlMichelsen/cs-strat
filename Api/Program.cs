@@ -51,10 +51,7 @@ builder.Services
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGenWithXmlDocumentation(options =>
-{
-    options.DocumentFilter<SignalRDocumentFilter>();
-    options.CustomSchemaIds(SwaggerExtension.GetSchemaIdRecursively);
-});
+    options.CustomSchemaIds(SwaggerExtension.GetSchemaIdRecursively));
 
 builder.Services.AddEndpointsApiExplorer();
 

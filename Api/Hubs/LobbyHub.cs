@@ -39,6 +39,11 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
         this.lobbyStateMachine = lobbyStateMachine;
     }
 
+    private UserConnectionContext UserContext
+    {
+        get => (this.Context.Items[nameof(UserConnectionContext)] as UserConnectionContext)!;
+    }
+
     /// <inheritdoc />
     public override async Task OnConnectedAsync()
     {
@@ -104,10 +109,5 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
     {
         await this.Clients.Group(this.UserContext.LobbyId.ToString())
             .MessageReceieved(UserMapper.Map(this.UserContext.User), message);
-    }
-
-    private UserConnectionContext UserContext
-    {
-        get => (this.Context.Items[nameof(UserConnectionContext)] as UserConnectionContext)!;
     }
 }

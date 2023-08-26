@@ -1,8 +1,11 @@
+using Domain.Attribute;
+
 namespace Domain.Dto;
 
 /// <summary>
 /// Model that represents a lobby inside a signalR hub.
 /// </summary>
+[DtoDisplayName("Lobby")]
 public class ActiveLobbyDto
 {
     /// <summary>
