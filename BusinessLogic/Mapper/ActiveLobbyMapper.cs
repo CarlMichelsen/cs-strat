@@ -40,6 +40,9 @@ public static class ActiveLobbyMapper
         {
             Online = metaUser.Online,
             User = UserMapper.Map(metaUser.User),
+            GrenadeAsignment = metaUser.GrenadeAsignment is null
+                ? default
+                : GrenadeMapper.Map(metaUser.GrenadeAsignment),
         };
     }
 

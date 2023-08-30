@@ -2,6 +2,7 @@ using Interface.Hubs;
 using Interface.Service;
 using Interface.LobbyManagement;
 using Domain.Lobby;
+using Domain.Dto;
 using Domain.Exception;
 using BusinessLogic.Mapper;
 using Microsoft.AspNetCore.Authorization;
@@ -101,6 +102,19 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
                 var changedUserDto = ActiveLobbyMapper.Map(changedUser);
                 await this.Clients.Group(this.UserContext.LobbyId.ToString()).User(changedUserDto);
             }
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task DistributeGrenades(List<GrenadeDto> grenades)
+    {
+        var activeLobby = this.lobbyManager.GetActiveLobby(this.UserContext.LobbyId);
+        if (activeLobby is not null)
+        {
+            var grenadeAsignments = lobbyStateMachine
+                .DistributeGrenades(activeLobby, grenades.Select(GrenadeMapper.Map).ToList());
+
+
         }
     }
 

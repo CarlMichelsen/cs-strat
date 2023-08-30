@@ -1,4 +1,3 @@
-using BusinessLogic.Mapper;
 using Domain.Dto;
 using Interface.Handler;
 using Interface.Service;
@@ -26,9 +25,9 @@ public class LobbyHandler : BaseHandler, ILobbyHandler
     }
 
     /// <inheritdoc />
-    public Task<ServiceResponse<string>> CreateLobby(Guid creator)
+    public Task<ServiceResponse<LobbyIdDto>> CreateLobby(Guid creator)
     {
-        return this.MapToServiceResponse<string>(this.logger, async () =>
+        return this.MapToServiceResponse<LobbyIdDto>(this.logger, async () =>
         {
             var lobby = await this.lobbyService.CreateLobby(creator);
             if (lobby.UniqueHumanReadableIdentifier is null)
@@ -36,22 +35,28 @@ public class LobbyHandler : BaseHandler, ILobbyHandler
                 throw new NullReferenceException("UniqueHumanReadableIdentifier null");
             }
 
-            return lobby.UniqueHumanReadableIdentifier;
+            return new LobbyIdDto
+            {
+                LobbyId = lobby.UniqueHumanReadableIdentifier,
+            };
         });
     }
 
     /// <inheritdoc />
-    public Task<ServiceResponse<string>> JoinLobby(string uniqueHumanReadableIdentifier, Guid user)
+    public Task<ServiceResponse<LobbyIdDto>> JoinLobby(string uniqueHumanReadableIdentifier, Guid user)
     {
-        return this.MapToServiceResponse<string>(this.logger, async () =>
+        return this.MapToServiceResponse<LobbyIdDto>(this.logger, async () =>
         {
             var lobby = await this.lobbyService.JoinLobby(uniqueHumanReadableIdentifier, user);
-            if (lobby.UniqueHumanReadableIdentifier is null)
+            if (lobby?.UniqueHumanReadableIdentifier is null)
             {
                 throw new NullReferenceException("UniqueHumanReadableIdentifier null");
             }
 
-            return lobby.UniqueHumanReadableIdentifier;
+            return new LobbyIdDto
+            {
+                LobbyId = lobby.UniqueHumanReadableIdentifier,
+            };
         });
     }
 }

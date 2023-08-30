@@ -1,3 +1,4 @@
+using Domain.Dto;
 using Interface.Hubs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,17 @@ public class SignalRServerDocumentationController : ControllerBase, ILobbyServer
     /// <returns>Task.</returns>
     [HttpPatch(nameof(ILobbyServer.Message))]
     public Task Message(string message)
+    {
+        throw new NotImplementedException("This method is for documentation purposes.");
+    }
+
+    /// <summary>
+    /// Invoke this method to send a list of grenades to be randomly distributed to connected lobby users.
+    /// </summary>
+    /// <param name="grenades">List of grenades to distribute.</param>
+    /// <returns>Task.</returns>
+    [HttpPatch(nameof(ILobbyServer.DistributeGrenades))]
+    public Task DistributeGrenades(List<GrenadeDto> grenades)
     {
         throw new NotImplementedException("This method is for documentation purposes.");
     }

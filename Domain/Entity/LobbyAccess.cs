@@ -11,7 +11,7 @@ public class LobbyAccess
     private const string Separator = ",";
 
     /// <summary>
-    /// Gets or sets database primary key identifier for lobby entity.
+    /// Gets database primary key identifier for lobby entity.
     /// </summary>
     /// <value>Integer primary key value.</value>
     [Key]
@@ -26,7 +26,7 @@ public class LobbyAccess
     required public string? UniqueHumanReadableIdentifier { get; set; }
 
     /// <summary>
-    /// Gets or sets user that created the lobby.
+    /// Gets user that created the lobby.
     /// </summary>
     /// <value>Creator user.</value>
     required public Guid Creator { get; init; }

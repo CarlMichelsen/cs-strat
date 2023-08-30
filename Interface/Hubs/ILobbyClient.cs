@@ -25,9 +25,16 @@ public interface ILobbyClient
     Task MessageReceieved(UserDto sender, string message);
 
     /// <summary>
+    /// Receive grenade to throw from the igl.
+    /// </summary>
+    /// <param name="grenade">Grenade to throw.</param>
+    /// <returns>Task.</returns>
+    Task GrenadeReceived(GrenadeDto grenade);
+
+    /// <summary>
     /// When new users join or exsisting users change online state or name.
     /// </summary>
     /// <param name="metaUser">Wrapper object with a user in it.</param>
-    /// <returns>MetaUser.</returns>
+    /// <returns>Task.</returns>
     Task User(MetaUserDto metaUser);
 }

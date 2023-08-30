@@ -36,6 +36,17 @@ public class SignalRClientDocumentationController : ControllerBase, ILobbyClient
     }
 
     /// <summary>
+    /// This method is invoked when the igl distributes grenades to connected users.
+    /// </summary>
+    /// <param name="grenade">Grenade to throw.</param>
+    /// <returns>Task.</returns>
+    [HttpPatch(nameof(ILobbyClient.GrenadeReceived))]
+    public Task GrenadeReceived(GrenadeDto grenade)
+    {
+        throw new NotImplementedException("This method is for documentation purposes.");
+    }
+
+    /// <summary>
     /// This method is invoked when a user is joining, leaving or changing name.
     /// </summary>
     /// <param name="metaUser">The relevant user wrapped in a metadata object.</param>

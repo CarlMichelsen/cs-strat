@@ -19,7 +19,7 @@ public class ActiveLobby
     required public string UniqueHumanReadableIdentifier { get; set; }
 
     /// <summary>
-    /// Gets or sets id of user that created the lobby.
+    /// Gets id of user that created the lobby.
     /// </summary>
     /// <value>Creator user.</value>
     required public Guid Creator { get; init; }
@@ -32,9 +32,9 @@ public class ActiveLobby
     required public Guid InGameLeader { get; set; }
 
     /// <summary>
-    /// Dictionary of users currently connected to the
+    /// Gets Dictionary of users currently connected to the lobby.
     /// </summary>
-    /// <value></value>
+    /// <value>Guid, MetaUser dictionary.</value>
     required public Dictionary<Guid, MetaUser> Members { get; init; }
 
     /// <summary>

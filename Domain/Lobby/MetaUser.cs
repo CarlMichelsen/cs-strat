@@ -6,7 +6,7 @@ namespace Domain.Lobby;
 public class MetaUser
 {
     /// <summary>
-    /// Gets or sets online (connected) state of the user.
+    /// Gets or sets a value indicating whether the user is online (connected).
     /// </summary>
     /// <value>Boolean online value.</value>
     required public bool Online { get; set; }
@@ -16,4 +16,10 @@ public class MetaUser
     /// </summary>
     /// <value>User.</value>
     required public User User { get; init; }
+
+    /// <summary>
+    /// Gets or sets the grenade the user is excpected to throw.
+    /// </summary>
+    /// <value>Grenade asignment.</value>
+    required public Grenade? GrenadeAsignment { get; set; }
 }

@@ -31,7 +31,7 @@ public class LobbyController : ControllerBase
     /// </summary>
     /// <returns>LobbyData.</returns>
     [HttpPost]
-    public async Task<ActionResult<ServiceResponse<string>>> CreateLobby()
+    public async Task<ActionResult<ServiceResponse<LobbyIdDto>>> CreateLobby()
     {
         var creator = this.HttpContext.User.GetUserModel();
 
@@ -47,7 +47,7 @@ public class LobbyController : ControllerBase
     /// <param name="uniqueHumanReadableIdentifier">Unique human readable lobby-identifier.</param>
     /// <returns>LobbyData.</returns>
     [HttpPut("{uniqueHumanReadableIdentifier}")]
-    public async Task<ActionResult<ServiceResponse<string>>> JoinLobby(
+    public async Task<ActionResult<ServiceResponse<LobbyIdDto>>> JoinLobby(
         [FromRoute] string uniqueHumanReadableIdentifier)
     {
         var joiner = this.HttpContext.User.GetUserModel();

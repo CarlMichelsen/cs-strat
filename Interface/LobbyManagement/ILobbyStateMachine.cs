@@ -14,4 +14,12 @@ public interface ILobbyStateMachine
     /// <param name="user">User that disconnected.</param>
     /// <returns>Offline MetaUser.</returns>
     MetaUser? UserDisconnected(ActiveLobby activeLobby, User user);
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="activeLobby"></param>
+    /// <param name="grenades"></param>
+    /// <returns></returns>
+    Dictionary<Guid, Grenade> DistributeGrenades(ActiveLobby activeLobby, List<Grenade> grenades); // TODO: add return type and model grenade implementation.
 }

@@ -1,4 +1,5 @@
 using Domain.Attribute;
+using Domain.Dto;
 
 namespace Interface.Hubs;
 
@@ -14,4 +15,11 @@ public interface ILobbyServer
     /// <param name="message">Message to send.</param>
     /// <returns>Task.</returns>
     Task Message(string message);
+
+    /// <summary>
+    /// Distribute grenades to other users connected to the lobby.
+    /// </summary>
+    /// <param name="grenades">List of grenades to distribute.</param>
+    /// <returns>Task.</returns>
+    Task DistributeGrenades(List<GrenadeDto> grenades);
 }
