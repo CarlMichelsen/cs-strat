@@ -17,7 +17,7 @@ public class SignalRClientDocumentationController : ControllerBase, ILobbyClient
     /// </summary>
     /// <param name="lobby">The current lobby.</param>
     /// <returns>Task.</returns>
-    [HttpPatch(nameof(ILobbyClient.Lobby))]
+    [HttpPatch("/" + nameof(ILobbyClient.Lobby))]
     public Task Lobby(ActiveLobbyDto lobby)
     {
         throw new NotImplementedException("This method is for documentation purposes.");
@@ -29,7 +29,7 @@ public class SignalRClientDocumentationController : ControllerBase, ILobbyClient
     /// <param name="user">Sender.</param>
     /// <param name="message">Message.</param>
     /// <returns>Task.</returns>
-    [HttpPatch(nameof(ILobbyClient.MessageReceieved))]
+    [HttpPatch("/" + nameof(ILobbyClient.MessageReceieved))]
     public Task MessageReceieved(UserDto user, string message)
     {
         throw new NotImplementedException("This method is for documentation purposes.");
@@ -38,10 +38,10 @@ public class SignalRClientDocumentationController : ControllerBase, ILobbyClient
     /// <summary>
     /// This method is invoked when the igl distributes grenades to connected users.
     /// </summary>
-    /// <param name="grenade">Grenade to throw.</param>
+    /// <param name="grenadeAssignments">Grenades to be assigned.</param>
     /// <returns>Task.</returns>
-    [HttpPatch(nameof(ILobbyClient.GrenadeReceived))]
-    public Task GrenadeReceived(GrenadeDto grenade)
+    [HttpPatch("/" + nameof(ILobbyClient.GrenadeAssignmentsReceived))]
+    public Task GrenadeAssignmentsReceived(IEnumerable<GrenadeAssignmentDto> grenadeAssignments)
     {
         throw new NotImplementedException("This method is for documentation purposes.");
     }
@@ -51,8 +51,8 @@ public class SignalRClientDocumentationController : ControllerBase, ILobbyClient
     /// </summary>
     /// <param name="metaUser">The relevant user wrapped in a metadata object.</param>
     /// <returns>Task.</returns>
-    [HttpPatch(nameof(ILobbyClient.User))]
-    public new Task User(MetaUserDto metaUser)
+    [HttpPatch("/" + nameof(ILobbyClient.UserInfo))]
+    public Task UserInfo(MetaUserDto metaUser)
     {
         throw new NotImplementedException("This method is for documentation purposes.");
     }

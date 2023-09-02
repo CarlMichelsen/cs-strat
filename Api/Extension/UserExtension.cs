@@ -1,5 +1,5 @@
-using Domain.Lobby;
 using BusinessLogic.Mapper;
+using Domain.Lobby;
 
 namespace Api.Extension;
 

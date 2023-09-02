@@ -17,7 +17,7 @@ public class SignalRServerDocumentationController : ControllerBase, ILobbyServer
     /// </summary>
     /// <param name="message">The content of the message.</param>
     /// <returns>Task.</returns>
-    [HttpPatch(nameof(ILobbyServer.Message))]
+    [HttpPatch("/" + nameof(ILobbyServer.Message))]
     public Task Message(string message)
     {
         throw new NotImplementedException("This method is for documentation purposes.");
@@ -26,10 +26,10 @@ public class SignalRServerDocumentationController : ControllerBase, ILobbyServer
     /// <summary>
     /// Invoke this method to send a list of grenades to be randomly distributed to connected lobby users.
     /// </summary>
-    /// <param name="grenades">List of grenades to distribute.</param>
+    /// <param name="grenadeAssignments">List of grenades to distribute.</param>
     /// <returns>Task.</returns>
-    [HttpPatch(nameof(ILobbyServer.DistributeGrenades))]
-    public Task DistributeGrenades(List<GrenadeDto> grenades)
+    [HttpPatch("/" + nameof(ILobbyServer.DistributeGrenades))]
+    public Task DistributeGrenades(List<GrenadeAssignmentDto> grenadeAssignments)
     {
         throw new NotImplementedException("This method is for documentation purposes.");
     }

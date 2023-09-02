@@ -17,10 +17,7 @@ public static class GrenadeMapper
     {
         return new GrenadeDto
         {
-            GrenadeType = nameof(grenade.GrenadeType),
-            HitLocation = grenade.HitLocation,
-            StartLocation = grenade.StartLocation,
-            Method = nameof(grenade.Method),
+            Name = grenade.Name,
             ImageUrl = grenade.ImageUrl,
         };
     }
@@ -34,11 +31,36 @@ public static class GrenadeMapper
     {
         return new Grenade
         {
-            GrenadeType = Enum.Parse<GrenadeType>(grenadeDto.GrenadeType),
-            HitLocation = grenadeDto.HitLocation,
-            StartLocation = grenadeDto.StartLocation,
-            Method = Enum.Parse<ThrowMethod>(grenadeDto.Method),
+            Name = grenadeDto.Name,
             ImageUrl = grenadeDto.ImageUrl,
+        };
+    }
+
+    /// <summary>
+    /// Map GrenadeAssignment to GrenadeAssignmentDto.
+    /// </summary>
+    /// <param name="grenadeAssignment">Object to be mapped.</param>
+    /// <returns>Map-result object.</returns>
+    public static GrenadeAssignmentDto Map(GrenadeAssignment grenadeAssignment)
+    {
+        return new GrenadeAssignmentDto
+        {
+            User = grenadeAssignment.User,
+            Assignment = Map(grenadeAssignment.Assignment),
+        };
+    }
+
+    /// <summary>
+    /// Map GrenadeAssignmentDto to GrenadeAssignment.
+    /// </summary>
+    /// <param name="grenadeAssignment">Object to be mapped.</param>
+    /// <returns>Map-result object.</returns>
+    public static GrenadeAssignment Map(GrenadeAssignmentDto grenadeAssignment)
+    {
+        return new GrenadeAssignment
+        {
+            User = grenadeAssignment.User,
+            Assignment = Map(grenadeAssignment.Assignment),
         };
     }
 }

@@ -9,28 +9,10 @@ namespace Domain.Dto;
 public class GrenadeDto
 {
     /// <summary>
-    /// Gets type of grenade.
+    /// Gets name of the grenade, the name usually references the hitlocation and the type of grenade.
     /// </summary>
-    /// <value>GrenadeType.</value>
-    required public string GrenadeType { get; init; }
-
-    /// <summary>
-    /// Gets name iof the place this grenade hits.
-    /// </summary>
-    /// <value>HitLocation name.</value>
-    required public string HitLocation { get; init; }
-
-    /// <summary>
-    /// Gets name of the place the player should be starting to throw this grenade.
-    /// </summary>
-    /// <value>Start location name.</value>
-    required public string StartLocation { get; init; }
-
-    /// <summary>
-    /// Gets ThrowMethod. How should this grenade be thrown.
-    /// </summary>
-    /// <value>ThrowMethod.</value>
-    required public string Method { get; init; }
+    /// <value>Grenade name.</value>
+    required public string Name { get; init; }
 
     /// <summary>
     /// Gets imageUrl or gif url that describes how this grenade should be thrown.

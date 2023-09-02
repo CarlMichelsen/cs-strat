@@ -1,10 +1,9 @@
-using Interface.Hubs;
-using Interface.Service;
-using Interface.LobbyManagement;
-using Domain.Lobby;
-using Domain.Dto;
-using Domain.Exception;
 using BusinessLogic.Mapper;
+using Domain.Dto;
+using Domain.Lobby;
+using Interface.Hubs;
+using Interface.LobbyManagement;
+using Interface.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
@@ -40,6 +39,7 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
         this.lobbyStateMachine = lobbyStateMachine;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1009: Closing parenthesis should be followed by a space", Justification = "Will never be null.")]
     private UserConnectionContext UserContext
     {
         get => (this.Context.Items[nameof(UserConnectionContext)] as UserConnectionContext)!;
@@ -48,22 +48,11 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
     /// <inheritdoc />
     public override async Task OnConnectedAsync()
     {
-        UserConnectionContext connectionContext;
+        var connectionContext = await this.lobbyAuthService
+            .Connect(this.Context.User, this.Context.GetHttpContext()?.Request.Query);
 
-        try
+        if (connectionContext is null)
         {
-            connectionContext = await this.lobbyAuthService
-                .Connect(this.Context.User, this.Context.GetHttpContext()?.Request.Query);
-        }
-        catch (LobbyAuthException e)
-        {
-            this.logger.LogInformation("{}: {}", nameof(LobbyAuthException), e.Message);
-            this.Context.Abort();
-            return;
-        }
-        catch (System.Exception e)
-        {
-            this.logger.LogError("Fatal Error {}", e.Message);
             this.Context.Abort();
             return;
         }
@@ -71,7 +60,8 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
         // Add UserContext
         this.Context.Items.Add(nameof(UserConnectionContext), connectionContext);
 
-        var activeLobby = this.lobbyManager.GetActiveLobby(connectionContext.LobbyId);
+        var activeLobby = this.lobbyManager
+            .GetActiveLobby(connectionContext.LobbyId);
         if (activeLobby is null)
         {
             this.logger.LogCritical("If there is no active lobby at this point I'm throwing a tantrum.");
@@ -81,41 +71,51 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
 
         var groupName = activeLobby.Id.ToString();
 
-        var connectedUserDto = ActiveLobbyMapper.Map(activeLobby.Members[connectionContext.User.Id]!);
-        await this.Clients.Group(groupName).User(connectedUserDto);
+        var connectedUser = activeLobby.Members[connectionContext.User.Id]
+            ?? throw new NullReferenceException("This should never ever happen");
+        var connectedUserDto = ActiveLobbyMapper.Map(connectedUser);
+        await this.Clients.Group(groupName)
+            .UserInfo(connectedUserDto);
 
         await this.Groups.AddToGroupAsync(this.Context.ConnectionId, groupName);
-        await this.Clients.Group(groupName).Lobby(ActiveLobbyMapper.Map(activeLobby));
+        await this.Clients.Group(groupName)
+            .Lobby(ActiveLobbyMapper.Map(activeLobby));
     }
 
     /// <inheritdoc />
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var activeLobby = this.lobbyManager.GetActiveLobby(this.UserContext.LobbyId);
-        if (activeLobby is not null)
+        if (activeLobby is null)
         {
-            var changedUser = this.lobbyStateMachine
-                .UserDisconnected(activeLobby, this.UserContext.User);
+            return;
+        }
 
-            if (changedUser is not null)
-            {
-                var changedUserDto = ActiveLobbyMapper.Map(changedUser);
-                await this.Clients.Group(this.UserContext.LobbyId.ToString()).User(changedUserDto);
-            }
+        var changedUser = this.lobbyStateMachine
+            .UserDisconnected(activeLobby, this.UserContext.User);
+
+        if (changedUser is not null)
+        {
+            var changedUserDto = ActiveLobbyMapper.Map(changedUser);
+            await this.Clients.Group(this.UserContext.LobbyId.ToString())
+                .UserInfo(changedUserDto);
         }
     }
 
     /// <inheritdoc />
-    public async Task DistributeGrenades(List<GrenadeDto> grenades)
+    public async Task DistributeGrenades(List<GrenadeAssignmentDto> grenadeAssignments)
     {
         var activeLobby = this.lobbyManager.GetActiveLobby(this.UserContext.LobbyId);
-        if (activeLobby is not null)
+        if (activeLobby is null)
         {
-            var grenadeAsignments = lobbyStateMachine
-                .DistributeGrenades(activeLobby, grenades.Select(GrenadeMapper.Map).ToList());
-
-
+            return;
         }
+
+        var resultAssignments = this.lobbyStateMachine
+            .DistributeGrenades(activeLobby, grenadeAssignments.Select(GrenadeMapper.Map));
+
+        await this.Clients.Group(this.UserContext.LobbyId.ToString())
+            .GrenadeAssignmentsReceived(resultAssignments.Select(GrenadeMapper.Map));
     }
 
     /// <inheritdoc />

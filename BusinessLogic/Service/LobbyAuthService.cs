@@ -7,6 +7,7 @@ using Interface.LobbyManagement;
 using Interface.Repository;
 using Interface.Service;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace BusinessLogic.Service;
 
@@ -15,35 +16,41 @@ public class LobbyAuthService : ILobbyAuthService
 {
     private const string LobbyIdQueryName = "lobbyId";
 
+    private readonly ILogger<LobbyAuthService> logger;
     private readonly ILobbyAccessRepository lobbyAccessRepository;
     private readonly ILobbyManager lobbyManager;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JwtService"/> class.
     /// </summary>
+    /// <param name="logger">Logger for logging errors during connection.</param>
     /// <param name="lobbyAccessRepository">Repository for checking lobby access.</param>
     /// <param name="lobbyManager">Manager for lobbies on the server.</param>
     public LobbyAuthService(
+        ILogger<LobbyAuthService> logger,
         ILobbyAccessRepository lobbyAccessRepository,
         ILobbyManager lobbyManager)
     {
+        this.logger = logger;
         this.lobbyAccessRepository = lobbyAccessRepository;
         this.lobbyManager = lobbyManager;
     }
 
     /// <inheritdoc />
-    public async Task<UserConnectionContext> Connect(
+    public async Task<UserConnectionContext?> Connect(
         ClaimsPrincipal? claimsPrincipal,
         IQueryCollection? queryCollection)
     {
         if (claimsPrincipal is null)
         {
-            throw new LobbyAuthException("No claims");
+            this.LogConnectionError("No claims");
+            return default;
         }
 
         if (queryCollection is null || queryCollection.Count == 0)
         {
-            throw new LobbyAuthException("No query parameters in handshake");
+            this.LogConnectionError("No query parameters in handshake");
+            return default;
         }
 
         var user = UserMapper.Map(claimsPrincipal);
@@ -55,12 +62,14 @@ public class LobbyAuthService : ILobbyAuthService
 
         if (lobbyAccess is null)
         {
-            throw new LobbyAuthException("Did not find a LobbyAccess record in the database.");
+            this.LogConnectionError("Did not find a LobbyAccess record in the database.");
+            return default;
         }
 
         if (!lobbyAccess.Members.Any(u => u == user.Id))
         {
-            throw new LobbyAuthException("User is not a member of the lobby");
+            this.LogConnectionError("User is not a member of the lobby");
+            return default;
         }
 
         var exsistingLobby = this.lobbyManager
@@ -72,6 +81,11 @@ public class LobbyAuthService : ILobbyAuthService
             User = user,
             LobbyId = lobbyAccess.Id,
         };
+    }
+
+    private void LogConnectionError(string errorReason)
+    {
+        this.logger.LogWarning("SignalR connection failed for the following reason: {}", errorReason);
     }
 
     private string GetHandshakeLobbyId(IQueryCollection queryCollection)

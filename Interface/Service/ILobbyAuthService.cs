@@ -15,7 +15,7 @@ public interface ILobbyAuthService
     /// <param name="claimsPrincipal">Claims to get user data from.</param>
     /// <param name="queryCollection">Query collection from hub handshake that contains the lobbyId.</param>
     /// <returns>Nullable UserConnectionContext.</returns>
-    Task<UserConnectionContext> Connect(
+    Task<UserConnectionContext?> Connect(
         System.Security.Claims.ClaimsPrincipal? claimsPrincipal,
         IQueryCollection? queryCollection);
 }

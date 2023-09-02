@@ -18,8 +18,8 @@ public interface ILobbyStateMachine
     /// <summary>
     ///
     /// </summary>
-    /// <param name="activeLobby"></param>
-    /// <param name="grenades"></param>
-    /// <returns></returns>
-    Dictionary<Guid, Grenade> DistributeGrenades(ActiveLobby activeLobby, List<Grenade> grenades); // TODO: add return type and model grenade implementation.
+    /// <param name="activeLobby">The lobby to distribute grenades in.</param>
+    /// <param name="grenadeAssignments">Grenades and the userId to receieve them.</param>
+    /// <returns>Grenade assignments.</returns>
+    IEnumerable<GrenadeAssignment> DistributeGrenades(ActiveLobby activeLobby, IEnumerable<GrenadeAssignment> grenadeAssignments);
 }

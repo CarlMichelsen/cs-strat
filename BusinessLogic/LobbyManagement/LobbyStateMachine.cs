@@ -7,31 +7,19 @@ namespace BusinessLogic.LobbyManagement;
 public class LobbyStateMachine : ILobbyStateMachine
 {
     /// <inheritdoc />
-    public Dictionary<Guid, Grenade> DistributeGrenades(ActiveLobby activeLobby, List<Grenade> grenades)
+    public IEnumerable<GrenadeAssignment> DistributeGrenades(ActiveLobby activeLobby, IEnumerable<GrenadeAssignment> grenadeAssignments)
     {
-        var dict = new Dictionary<Guid, Grenade>();
-        var rng = new Random();
-        var randomlyOrderedMemberIds = activeLobby.Members
-            .Select(d => d.Key)
-            .OrderBy(a => rng.Next())
-            .ToList();
-
-        var counter = 0;
-        while (grenades.Count > 0)
+        var successfulAssignments = new List<GrenadeAssignment>();
+        foreach (var assignment in grenadeAssignments)
         {
-            if (counter >= randomlyOrderedMemberIds.Count)
+            if (activeLobby.Members.TryGetValue(assignment.User, out var member))
             {
-                break;
+                member.GrenadeAsignment = assignment.Assignment;
+                successfulAssignments.Add(assignment);
             }
-            var memberId = randomlyOrderedMemberIds[counter];
-
-            var grenadeToAsign = grenades.First();
-            activeLobby.Members[memberId].GrenadeAsignment = grenadeToAsign;
-            dict.Add(memberId, grenadeToAsign);
-            grenades.Remove(grenadeToAsign);
         }
 
-        return dict;
+        return successfulAssignments;
     }
 
     /// <inheritdoc />

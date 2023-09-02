@@ -44,16 +44,16 @@ public class LobbyController : ControllerBase
     /// <summary>
     /// Join an exsisting lobby, the joiner is derived from cookie.
     /// </summary>
-    /// <param name="uniqueHumanReadableIdentifier">Unique human readable lobby-identifier.</param>
+    /// <param name="lobbyId">Unique human readable lobby-identifier.</param>
     /// <returns>LobbyData.</returns>
-    [HttpPut("{uniqueHumanReadableIdentifier}")]
+    [HttpPut("{lobbyId}")]
     public async Task<ActionResult<ServiceResponse<LobbyIdDto>>> JoinLobby(
-        [FromRoute] string uniqueHumanReadableIdentifier)
+        [FromRoute] string lobbyId)
     {
         var joiner = this.HttpContext.User.GetUserModel();
 
         var lobbyResponse = await this.lobbyHandler
-            .JoinLobby(uniqueHumanReadableIdentifier, joiner.Id);
+            .JoinLobby(lobbyId, joiner.Id);
 
         return lobbyResponse;
     }

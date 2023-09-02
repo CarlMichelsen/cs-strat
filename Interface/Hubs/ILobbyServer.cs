@@ -19,7 +19,7 @@ public interface ILobbyServer
     /// <summary>
     /// Distribute grenades to other users connected to the lobby.
     /// </summary>
-    /// <param name="grenades">List of grenades to distribute.</param>
+    /// <param name="grenadeAssignments">List of grenades to be distributed to connected users.</param>
     /// <returns>Task.</returns>
-    Task DistributeGrenades(List<GrenadeDto> grenades);
+    Task DistributeGrenades(List<GrenadeAssignmentDto> grenadeAssignments);
 }
