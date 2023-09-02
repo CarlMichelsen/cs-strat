@@ -3,6 +3,7 @@ using Domain.Dto;
 using Interface.Handler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Api.Controllers;
 
@@ -30,6 +31,7 @@ public class LobbyController : ControllerBase
     /// Create a lobby, the creator of the lobby is derived from cookie.
     /// </summary>
     /// <returns>LobbyData.</returns>
+    [EnableRateLimiting("fixed")]
     [HttpPost]
     public async Task<ActionResult<ServiceResponse<LobbyIdDto>>> CreateLobby()
     {
@@ -46,6 +48,7 @@ public class LobbyController : ControllerBase
     /// </summary>
     /// <param name="lobbyId">Unique human readable lobby-identifier.</param>
     /// <returns>LobbyData.</returns>
+    [EnableRateLimiting("fixed")]
     [HttpPut("{lobbyId}")]
     public async Task<ActionResult<ServiceResponse<LobbyIdDto>>> JoinLobby(
         [FromRoute] string lobbyId)

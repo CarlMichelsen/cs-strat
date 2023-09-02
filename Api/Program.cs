@@ -13,6 +13,7 @@ using Interface.Repository;
 using Interface.LobbyManagement;
 using Interface.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -112,8 +113,19 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services
-    .AddAuthorization();
+builder.Services.AddRateLimiter(rateLimiterOptions =>
+{
+    rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
+    {
+        options.Window = TimeSpan.FromSeconds(10);
+        options.PermitLimit = 3;
+        options.QueueLimit = 0;
+    });
+});
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 
@@ -129,6 +141,8 @@ if (app.Environment.IsDevelopment() || swaggerOptions!.Value.Enabled)
 }
 
 app.UseHttpsRedirection();
+
+app.UseRateLimiter();
 
 app.UseCors("FrontendAllowed");
 

@@ -45,7 +45,7 @@ public static class GrenadeMapper
     {
         return new GrenadeAssignmentDto
         {
-            User = grenadeAssignment.User,
+            UserId = grenadeAssignment.UserId,
             Assignment = Map(grenadeAssignment.Assignment),
         };
     }
@@ -59,7 +59,7 @@ public static class GrenadeMapper
     {
         return new GrenadeAssignment
         {
-            User = grenadeAssignment.User,
+            UserId = grenadeAssignment.UserId,
             Assignment = Map(grenadeAssignment.Assignment),
         };
     }

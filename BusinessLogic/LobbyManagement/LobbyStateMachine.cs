@@ -12,7 +12,7 @@ public class LobbyStateMachine : ILobbyStateMachine
         var successfulAssignments = new List<GrenadeAssignment>();
         foreach (var assignment in grenadeAssignments)
         {
-            if (activeLobby.Members.TryGetValue(assignment.User, out var member))
+            if (activeLobby.Members.TryGetValue(assignment.UserId, out var member))
             {
                 member.GrenadeAsignment = assignment.Assignment;
                 successfulAssignments.Add(assignment);

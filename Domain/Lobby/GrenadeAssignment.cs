@@ -9,7 +9,7 @@ public class GrenadeAssignment
     /// Gets the user that should throw this grenade.
     /// </summary>
     /// <value>UserId.</value>
-    required public Guid User { get; init; }
+    required public Guid UserId { get; init; }
 
     /// <summary>
     /// Gets the grenade to be assigned.
