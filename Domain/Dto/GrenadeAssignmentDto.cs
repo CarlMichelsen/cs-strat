@@ -18,5 +18,5 @@ public class GrenadeAssignmentDto
     /// Gets the grenade to be assigned.
     /// </summary>
     /// <value>Grenade.</value>
-    required public GrenadeDto Assignment { get; init; }
+    required public GrenadeDto? Assignment { get; init; }
 }

@@ -18,7 +18,7 @@ public static class ActiveLobbyMapper
     {
         return new ActiveLobbyDto
         {
-            UniqueHumanReadableIdentifier = activeLobby.UniqueHumanReadableIdentifier,
+            Id = activeLobby.UniqueHumanReadableIdentifier,
             Creator = activeLobby.Creator,
             InGameLeader = activeLobby.InGameLeader,
             Members = activeLobby.Members.ToDictionary(
@@ -40,9 +40,9 @@ public static class ActiveLobbyMapper
         {
             Online = metaUser.Online,
             User = UserMapper.Map(metaUser.User),
-            GrenadeAsignment = metaUser.GrenadeAsignment is null
+            GrenadeAssignment = metaUser.GrenadeAssignment is null
                 ? default
-                : GrenadeMapper.Map(metaUser.GrenadeAsignment),
+                : GrenadeMapper.Map(metaUser.GrenadeAssignment),
         };
     }
 

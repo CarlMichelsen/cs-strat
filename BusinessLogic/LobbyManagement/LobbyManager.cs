@@ -41,7 +41,7 @@ public class LobbyManager : ILobbyManager
             {
                 Online = true,
                 User = joiner,
-                GrenadeAsignment = default,
+                GrenadeAssignment = default,
             });
         }
 
@@ -57,7 +57,7 @@ public class LobbyManager : ILobbyManager
         {
             Online = true,
             User = joiner,
-            GrenadeAsignment = default,
+            GrenadeAssignment = default,
         };
         activeLobby.Members.Add(joiner.Id, metaUser);
 

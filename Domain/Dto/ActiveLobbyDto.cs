@@ -12,7 +12,7 @@ public class ActiveLobbyDto
     /// Gets or sets unique human readable identifier used by users to join a lobby.
     /// </summary>
     /// <value>String unique human readable identifier.</value>
-    required public string UniqueHumanReadableIdentifier { get; set; }
+    required public string Id { get; set; }
 
     /// <summary>
     /// Gets id of user that created the lobby.

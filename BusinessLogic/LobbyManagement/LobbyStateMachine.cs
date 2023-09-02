@@ -14,7 +14,7 @@ public class LobbyStateMachine : ILobbyStateMachine
         {
             if (activeLobby.Members.TryGetValue(assignment.UserId, out var member))
             {
-                member.GrenadeAsignment = assignment.Assignment;
+                member.GrenadeAssignment = assignment.Assignment;
                 successfulAssignments.Add(assignment);
             }
         }

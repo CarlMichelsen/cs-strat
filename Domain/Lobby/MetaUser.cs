@@ -21,5 +21,5 @@ public class MetaUser
     /// Gets or sets the grenade the user is excpected to throw.
     /// </summary>
     /// <value>Grenade asignment.</value>
-    required public Grenade? GrenadeAsignment { get; set; }
+    required public Grenade? GrenadeAssignment { get; set; }
 }

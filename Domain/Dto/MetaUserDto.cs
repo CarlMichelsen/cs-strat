@@ -24,5 +24,5 @@ public class MetaUserDto
     /// Gets or sets the grenade the user is excpected to throw.
     /// </summary>
     /// <value>Grenade asignment.</value>
-    required public GrenadeDto? GrenadeAsignment { get; set; }
+    required public GrenadeDto? GrenadeAssignment { get; set; }
 }
