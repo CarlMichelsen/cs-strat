@@ -106,7 +106,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendAllowed", builder =>
     {
-        builder.WithOrigins("http://localhost:5173")
+        builder.WithOrigins("https://www.cs2igl.com")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
