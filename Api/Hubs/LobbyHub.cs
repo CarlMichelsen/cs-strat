@@ -78,7 +78,7 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
             .UserInfo(connectedUserDto);
 
         await this.Groups.AddToGroupAsync(this.Context.ConnectionId, groupName);
-        await this.Clients.Group(groupName)
+        await this.Clients.Caller
             .Lobby(ActiveLobbyMapper.Map(activeLobby));
     }
 
