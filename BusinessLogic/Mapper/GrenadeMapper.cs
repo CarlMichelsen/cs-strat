@@ -17,8 +17,10 @@ public static class GrenadeMapper
     {
         return new GrenadeDto
         {
-            Name = grenade.Name,
+            Team = grenade.Team,
+            Description = grenade.Description,
             ImageUrl = grenade.ImageUrl,
+            Jumpthrow = grenade.Jumpthrow,
         };
     }
 
@@ -31,8 +33,10 @@ public static class GrenadeMapper
     {
         return new Grenade
         {
-            Name = grenadeDto.Name,
+            Team = grenadeDto.Team,
+            Description = grenadeDto.Description,
             ImageUrl = grenadeDto.ImageUrl,
+            Jumpthrow = grenadeDto.Jumpthrow,
         };
     }
 
