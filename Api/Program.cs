@@ -71,6 +71,12 @@ builder.Services
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services
+    .AddOptions<CorsOptions>()
+    .Bind(builder.Configuration.GetSection(CorsOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 // Authorization
 builder.Services
     .AddAuthentication(options =>
@@ -104,9 +110,16 @@ builder.Services
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("FrontendAllowed", builder =>
+    options.AddPolicy("FrontendAllowed", corsBuilder =>
     {
-        builder.WithOrigins("http://localhost:5173")
+        var corsOptions = builder.Configuration.GetSection(CorsOptions.SectionName);
+        var commaSeparatedOrigins = corsOptions[nameof(CorsOptions.WithOrigins)];
+
+        var origins = commaSeparatedOrigins!.Split(',')
+            .Where(origin => !string.IsNullOrWhiteSpace(origin))
+            .Select(origin => origin.Trim());
+
+        corsBuilder.WithOrigins(origins.ToArray())
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
