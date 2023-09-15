@@ -85,20 +85,31 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
     /// <inheritdoc />
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        var activeLobby = this.lobbyManager.GetActiveLobby(this.UserContext.LobbyId);
-        if (activeLobby is null)
+        try
         {
-            return;
+            var activeLobby = this.lobbyManager.GetActiveLobby(this.UserContext.LobbyId);
+            if (activeLobby is null)
+            {
+                return;
+            }
+
+            var changedUser = this.lobbyStateMachine
+                .UserDisconnected(activeLobby, this.UserContext.User);
+
+            if (changedUser is not null)
+            {
+                var changedUserDto = ActiveLobbyMapper.Map(changedUser);
+                await this.Clients.Group(this.UserContext.LobbyId.ToString())
+                    .UserInfo(changedUserDto);
+            }
         }
-
-        var changedUser = this.lobbyStateMachine
-            .UserDisconnected(activeLobby, this.UserContext.User);
-
-        if (changedUser is not null)
+        catch (System.Exception)
         {
-            var changedUserDto = ActiveLobbyMapper.Map(changedUser);
-            await this.Clients.Group(this.UserContext.LobbyId.ToString())
-                .UserInfo(changedUserDto);
+            throw;
+        }
+        finally
+        {
+            await base.OnDisconnectedAsync(exception);
         }
     }
 

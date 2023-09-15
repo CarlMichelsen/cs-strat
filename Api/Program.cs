@@ -90,15 +90,13 @@ builder.Services
         var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName);
         var keyString = jwtOptions[nameof(JwtOptions.Key)];
         var key = Encoding.UTF8.GetBytes(keyString!);
-        var issuer = jwtOptions[nameof(JwtOptions.Issuer)];
-        var audience = jwtOptions[nameof(JwtOptions.Audience)];
 
         options.RequireHttpsMetadata = false;
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidIssuer = issuer,
-            ValidAudience = audience,
+            ValidIssuer = jwtOptions[nameof(JwtOptions.Issuer)],
+            ValidAudience = jwtOptions[nameof(JwtOptions.Audience)],
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -113,13 +111,15 @@ builder.Services.AddCors(options =>
     options.AddPolicy("FrontendAllowed", corsBuilder =>
     {
         var corsOptions = builder.Configuration.GetSection(CorsOptions.SectionName);
-        var commaSeparatedOrigins = corsOptions[nameof(CorsOptions.WithOrigins)];
+        var commaSeparatedOrigins = corsOptions[nameof(CorsOptions.WithOrigins)]
+            ?? throw new NullReferenceException("No origins in configuration");
 
-        var origins = commaSeparatedOrigins!.Split(',')
+        var origins = commaSeparatedOrigins.Split(',')
             .Where(origin => !string.IsNullOrWhiteSpace(origin))
-            .Select(origin => origin.Trim());
+            .Select(origin => origin.Trim())
+            .ToArray();
 
-        corsBuilder.WithOrigins(origins.ToArray())
+        corsBuilder.WithOrigins(origins)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
