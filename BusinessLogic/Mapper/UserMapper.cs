@@ -46,17 +46,50 @@ public static class UserMapper
     }
 
     /// <summary>
-    /// Map user to userDto.
+    /// Map DTO user to user.
     /// </summary>
-    /// <param name="user">Domain user.</param>
-    /// <returns>UserDto.</returns>
-    public static UserDto Map(
-        User user)
+    /// <param name="user">User to map from.</param>
+    /// <returns>User.</returns>
+    public static User Map(UserDto user)
+    {
+        return new User
+        {
+            Id = user.Id,
+            Name = user.Name,
+        };
+    }
+
+    /// <summary>
+    /// Map domain user to userdto.
+    /// </summary>
+    /// <param name="user">User to map from.</param>
+    /// <returns>User.</returns>
+    public static UserDto Map(User user)
     {
         return new UserDto
         {
             Id = user.Id,
             Name = user.Name,
+        };
+    }
+
+    /// <summary>
+    /// Map user to userDto.
+    /// </summary>
+    /// <param name="user">Domain user.</param>
+    /// <param name="online">Is user online or not.</param>
+    /// <param name="assignment">grenade the user is supposed to throw.</param>
+    /// <returns>UserDto.</returns>
+    public static MetaUserDto Map(
+        User user,
+        bool online,
+        Grenade? assignment)
+    {
+        return new MetaUserDto
+        {
+            Name = user.Name,
+            Online = online,
+            GrenadeAssignment = assignment is null ? null : GrenadeMapper.Map(assignment),
         };
     }
 }

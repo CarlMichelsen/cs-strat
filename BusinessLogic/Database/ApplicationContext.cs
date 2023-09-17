@@ -17,6 +17,12 @@ public class ApplicationContext : DbContext
     {
     }
 
+    /// <summary>
+    /// Gets or sets lobby DbSet for access to lobbies in database.
+    /// </summary>
+    /// <value>Lobby DbSet.</value>
+    required public DbSet<LobbyAccess> Lobby { get; set; }
+
     /// <inheritdoc />
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
@@ -25,10 +31,4 @@ public class ApplicationContext : DbContext
             .Property(f => f.Id)
             .ValueGeneratedOnAdd();
     }
-
-    /// <summary>
-    /// Gets or sets lobby DbSet for access to lobbies in database.
-    /// </summary>
-    /// <value>Lobby DbSet.</value>
-    required public DbSet<LobbyAccess> Lobby { get; set; }
 }

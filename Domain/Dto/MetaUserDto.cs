@@ -5,7 +5,7 @@ namespace Domain.Dto;
 /// <summary>
 /// Wrapper for user that contains useful metadata about the connectionstate of the user.
 /// </summary>
-[DtoDisplayName("MetaUser")]
+[DtoDisplayName("User")]
 public class MetaUserDto
 {
     /// <summary>
@@ -15,10 +15,10 @@ public class MetaUserDto
     required public bool Online { get; set; }
 
     /// <summary>
-    /// Gets the user.
+    /// Gets or initiates name for the user.
     /// </summary>
-    /// <value>User.</value>
-    required public UserDto User { get; init; }
+    /// <value>User name.</value>
+    required public string Name { get; init; }
 
     /// <summary>
     /// Gets or sets the grenade the user is excpected to throw.

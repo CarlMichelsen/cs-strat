@@ -39,7 +39,7 @@ public static class ActiveLobbyMapper
         return new MetaUserDto
         {
             Online = metaUser.Online,
-            User = UserMapper.Map(metaUser.User),
+            Name = metaUser.User.Name,
             GrenadeAssignment = metaUser.GrenadeAssignment is null
                 ? default
                 : GrenadeMapper.Map(metaUser.GrenadeAssignment),

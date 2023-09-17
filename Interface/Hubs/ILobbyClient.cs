@@ -19,10 +19,10 @@ public interface ILobbyClient
     /// <summary>
     /// Receieve message from another member of the lobby.
     /// </summary>
-    /// <param name="sender">User sender.</param>
+    /// <param name="sender">Userid for sender.</param>
     /// <param name="message">String message.</param>
     /// <returns>Task.</returns>
-    Task MessageReceieved(UserDto sender, string message);
+    Task MessageReceieved(Guid sender, string message);
 
     /// <summary>
     /// Receive grenades to throw from the igl.

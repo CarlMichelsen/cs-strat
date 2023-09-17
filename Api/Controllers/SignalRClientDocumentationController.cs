@@ -26,11 +26,11 @@ public class SignalRClientDocumentationController : ControllerBase, ILobbyClient
     /// <summary>
     /// This method is invoked when a new message is sent by a connected user.
     /// </summary>
-    /// <param name="user">Sender.</param>
+    /// <param name="sender">Sender id.</param>
     /// <param name="message">Message.</param>
     /// <returns>Task.</returns>
     [HttpPatch("/" + nameof(ILobbyClient.MessageReceieved))]
-    public Task MessageReceieved(UserDto user, string message)
+    public Task MessageReceieved(Guid sender, string message)
     {
         throw new NotImplementedException("This method is for documentation purposes.");
     }

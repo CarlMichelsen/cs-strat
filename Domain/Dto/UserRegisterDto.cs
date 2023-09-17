@@ -1,8 +1,11 @@
+using Domain.Attribute;
+
 namespace Domain.Dto;
 
 /// <summary>
 /// Register request model.
 /// </summary>
+[DtoDisplayName("UserRegister")]
 public class UserRegisterDto
 {
     /// <summary>

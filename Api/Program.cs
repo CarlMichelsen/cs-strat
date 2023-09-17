@@ -27,7 +27,8 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 // Handler
 builder.Services
     .AddTransient<ILobbyHandler, LobbyHandler>()
-    .AddTransient<IUserHandler, UserHandler>();
+    .AddTransient<IUserHandler, UserHandler>()
+    .AddTransient<ILobbyHubHandler, LobbyHubHandler>();
 
 // Service
 builder.Services
