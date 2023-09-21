@@ -72,7 +72,7 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
 
         var connectedUser = activeLobby.Members[connectionContext.User.Id]
             ?? throw new NullReferenceException("This should never ever happen");
-        var connectedUserDto = ActiveLobbyMapper.Map(connectedUser);
+        var connectedUserDto = ActiveLobbyMapper.MapToInfo(connectedUser);
         await this.Clients.Group(groupName)
             .UserInfo(connectedUserDto);
 
@@ -104,7 +104,7 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
 
             if (changedUser is not null)
             {
-                var changedUserDto = ActiveLobbyMapper.Map(changedUser);
+                var changedUserDto = ActiveLobbyMapper.MapToInfo(changedUser);
                 await this.GetGroup(activeLobby)
                     .UserInfo(changedUserDto);
             }

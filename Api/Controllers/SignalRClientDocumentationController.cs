@@ -49,10 +49,10 @@ public class SignalRClientDocumentationController : ControllerBase, ILobbyClient
     /// <summary>
     /// This method is invoked when a user is joining, leaving or changing name.
     /// </summary>
-    /// <param name="metaUser">The relevant user wrapped in a metadata object.</param>
+    /// <param name="userInfo">Object with userid and changes.</param>
     /// <returns>Task.</returns>
     [HttpPatch("/" + nameof(ILobbyClient.UserInfo))]
-    public Task UserInfo(MetaUserDto metaUser)
+    public Task UserInfo(UserInfoDto userInfo)
     {
         throw new NotImplementedException("This method is for documentation purposes.");
     }

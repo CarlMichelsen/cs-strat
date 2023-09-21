@@ -34,7 +34,7 @@ public interface ILobbyClient
     /// <summary>
     /// When new users join or exsisting users change online state or name.
     /// </summary>
-    /// <param name="metaUser">Wrapper object with a user in it.</param>
+    /// <param name="userInfo">Object that contains information about a user that is in the lobby.</param>
     /// <returns>Task.</returns>
-    Task UserInfo(MetaUserDto metaUser);
+    Task UserInfo(UserInfoDto userInfo);
 }

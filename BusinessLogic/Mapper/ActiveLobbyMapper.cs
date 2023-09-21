@@ -47,6 +47,21 @@ public static class ActiveLobbyMapper
     }
 
     /// <summary>
+    /// Map a MetaUser to UserInfo.
+    /// </summary>
+    /// <param name="metaUser">MetaUser to map.</param>
+    /// <returns>UserInfoDto.</returns>
+    public static UserInfoDto MapToInfo(MetaUser metaUser)
+    {
+        return new UserInfoDto
+        {
+            Id = metaUser.User.Id,
+            Online = metaUser.Online,
+            Name = metaUser.User.Name,
+        };
+    }
+
+    /// <summary>
     /// Maps an ActiveLobby to an ActiveLobbyDto.
     /// </summary>
     /// <param name="lobbyAccess">LobbyAccess entity.</param>
