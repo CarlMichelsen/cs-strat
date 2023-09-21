@@ -16,29 +16,27 @@ namespace Api.Hubs;
 [Authorize(Roles = "user")]
 public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
 {
-    private readonly ILobbyHubHandler handler;
     private readonly ILogger<LobbyHub> logger;
     private readonly ILobbyAuthService lobbyAuthService;
+    private readonly ILobbyStateMachine lobbyStateMachine;
     private readonly ILobbyManager lobbyManager;
-
-    private UserConnectionContext? context = default;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LobbyHub"/> class.
     /// </summary>
-    /// <param name="handler">Handle methods.</param>
     /// <param name="logger">For error logging.</param>
     /// <param name="lobbyAuthService">Service for handling authentication and authorization for user joining lobby.</param>
+    /// <param name="lobbyStateMachine">Handle methods.</param>
     /// <param name="lobbyManager">Manages lobbies.</param>
     public LobbyHub(
-        ILobbyHubHandler handler,
         ILogger<LobbyHub> logger,
         ILobbyAuthService lobbyAuthService,
+        ILobbyStateMachine lobbyStateMachine,
         ILobbyManager lobbyManager)
     {
-        this.handler = handler;
         this.logger = logger;
         this.lobbyAuthService = lobbyAuthService;
+        this.lobbyStateMachine = lobbyStateMachine;
         this.lobbyManager = lobbyManager;
     }
 
@@ -81,37 +79,95 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
         await this.Groups.AddToGroupAsync(this.Context.ConnectionId, groupName);
         await this.Clients.Caller
             .Lobby(ActiveLobbyMapper.Map(activeLobby));
-
-        this.context = this.UserContext();
-        this.handler.Group = this.Clients.Group(groupName);
     }
 
     /// <inheritdoc />
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        await this.Handle(() => this.handler.OnDisconnectedAsync(exception));
+        await this.Handle(async () =>
+        {
+            var userContext = this.UserContext();
+            if (userContext is null)
+            {
+                // lobby was closed
+                return;
+            }
+
+            var activeLobby = this.lobbyManager.GetActiveLobby(userContext.LobbyId);
+            if (activeLobby is null)
+            {
+                return;
+            }
+
+            var changedUser = this.lobbyStateMachine
+                .UserDisconnected(activeLobby, userContext.User);
+
+            if (changedUser is not null)
+            {
+                var changedUserDto = ActiveLobbyMapper.Map(changedUser);
+                await this.GetGroup(activeLobby)
+                    .UserInfo(changedUserDto);
+            }
+        });
     }
 
     /// <inheritdoc />
     public async Task DistributeGrenades(List<GrenadeAssignmentDto> grenadeAssignments)
     {
-        await this.Handle(() => this.handler.DistributeGrenades(grenadeAssignments));
+        this.logger.LogInformation("Hello==?=");
+        await this.Handle(async () =>
+        {
+            var activeLobby = this.lobbyManager
+                .GetActiveLobby(this.UserContext().LobbyId)
+                    ?? throw new NullReferenceException("Lobby should always be here");
+
+            this.logger.LogInformation("{}", grenadeAssignments.First().UserId);
+
+            var domainGrenadeAssignments = grenadeAssignments.Select(GrenadeMapper.Map);
+            var result = this.lobbyStateMachine
+                .DistributeGrenades(activeLobby, domainGrenadeAssignments);
+
+            if (result is not null && result.Count() > 0)
+            {
+                var dtoAssignments = result.Select(GrenadeMapper.Map);
+                await this.GetGroup(activeLobby).GrenadeAssignmentsReceived(dtoAssignments);
+            }
+        });
     }
 
     /// <inheritdoc />
     public async Task Message(string message)
     {
-        await this.Handle(() => this.handler.Message(message));
+        await this.Handle(async () =>
+        {
+            await GetGroup()
+                .MessageReceieved(this.UserContext()!.User.Id, message);
+        });
     }
 
-    private void StructuredHubLog(Exception? exception, LogLevel logLevel)
+    private ILobbyClient GetGroup()
+    {
+        var activeLobby = this.lobbyManager
+            .GetActiveLobby(this.UserContext().LobbyId);
+        var groupName = activeLobby!.Id.ToString();
+        return this.Clients.Group(groupName);
+    }
+
+    private ILobbyClient GetGroup(ActiveLobby activeLobby)
+    {
+        var groupName = activeLobby!.Id.ToString();
+        return this.Clients.Group(groupName);
+    }
+
+    private void StructuredHubLog(Exception? exception, string description, LogLevel logLevel)
     {
         var context = this.UserContext();
         this.logger.Log(
             logLevel,
-            "{id} -> {user} OnDisconnectedAsync: {}",
+            "{id} -> {user} >{description}< {exception}",
             context.User.Id,
             context.User.Name,
+            description,
             exception);
     }
 
@@ -120,11 +176,11 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
         try
         {
             await action();
-            this.StructuredHubLog(null, LogLevel.Information);
+            this.StructuredHubLog(null, "action", LogLevel.Information);
         }
         catch (System.Exception e)
         {
-            this.StructuredHubLog(e, LogLevel.Critical);
+            this.StructuredHubLog(e, "unhandled exception", LogLevel.Critical);
         }
     }
 }
