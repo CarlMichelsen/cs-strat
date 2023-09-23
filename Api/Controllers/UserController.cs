@@ -1,4 +1,5 @@
 using Domain.Dto;
+using Domain.Configuration;
 using Interface.Handler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +45,7 @@ public class UserController : ControllerBase
     /// Get the information contained in your http-only cookie.
     /// </summary>
     /// <returns>Userdata.</returns>
-    [Authorize(Roles = "user")]
+    [Authorize(Roles = ApplicationConstants.UserRole)]
     [HttpGet]
     public ActionResult<ServiceResponse<UserDto>> WhoAmI()
     {

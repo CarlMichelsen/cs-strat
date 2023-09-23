@@ -1,8 +1,9 @@
 using BusinessLogic.Mapper;
+using Domain.Configuration;
 using Domain.Dto;
 using Domain.Lobby;
+using Domain.Exception;
 using Interface.Hubs;
-using Interface.Handler;
 using Interface.LobbyManagement;
 using Interface.Service;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ namespace Api.Hubs;
 /// <summary>
 /// SignalR hub for real-time communication.
 /// </summary>
-[Authorize(Roles = "user")]
+[Authorize(Roles = ApplicationConstants.UserRole)]
 public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
 {
     private readonly ILogger<LobbyHub> logger;
@@ -42,43 +43,41 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1009: Closing parenthesis should be followed by a space", Justification = "Will never be null.")]
     private UserConnectionContext UserContext()
-        => (this.Context.Items[nameof(UserConnectionContext)] as UserConnectionContext)!;
+        => (this.Context.Items[ApplicationConstants.LobbyUserConnectionContext] as UserConnectionContext)
+            ?? throw new NullReferenceException($"{ApplicationConstants.LobbyUserConnectionContext} was not properly supplied to Context->Items during long lived connection");
 
     /// <inheritdoc />
     public override async Task OnConnectedAsync()
     {
-        var connectionContext = await this.lobbyAuthService
-            .Connect(this.Context.User, this.Context.GetHttpContext()?.Request.Query);
-
-        if (connectionContext is null)
+        await this.Handle(async () =>
         {
-            this.Context.Abort();
-            return;
-        }
+            // Add UserContext
+            if (!this.Context.GetHttpContext()!.Items.TryGetValue(ApplicationConstants.LobbyUserConnectionContext, out var connectionContextObject))
+            {
+                this.Context.Abort();
+                this.logger.LogCritical("{} was not properly supplied to Context.Items in middleware", ApplicationConstants.LobbyUserConnectionContext);
+                return;
+            }
+            var connectionContext = (UserConnectionContext)connectionContextObject!;
+            this.Context.Items[ApplicationConstants.LobbyUserConnectionContext] = connectionContext;
 
-        // Add UserContext
-        this.Context.Items.Add(nameof(UserConnectionContext), connectionContext);
+            var activeLobby = this.lobbyManager
+                .GetActiveLobby(connectionContext.LobbyId)
+                    ?? throw new LobbyHubConnectionException("Lobby should really be present here");
 
-        var activeLobby = this.lobbyManager
-            .GetActiveLobby(connectionContext.LobbyId);
-        if (activeLobby is null)
-        {
-            this.logger.LogCritical("If there is no active lobby at this point I'm throwing a tantrum.");
-            this.Context.Abort();
-            return;
-        }
+            var groupName = activeLobby.Id.ToString();
 
-        var groupName = activeLobby.Id.ToString();
+            var connectedUser = activeLobby.Members[connectionContext.User.Id]
+                ?? throw new LobbyHubConnectionException("The connecting user should be in the lobby they are connecting to here");
 
-        var connectedUser = activeLobby.Members[connectionContext.User.Id]
-            ?? throw new NullReferenceException("This should never ever happen");
-        var connectedUserDto = ActiveLobbyMapper.MapToInfo(connectedUser);
-        await this.Clients.Group(groupName)
-            .UserInfo(connectedUserDto);
+            var connectedUserDto = ActiveLobbyMapper.MapToInfo(connectedUser);
+            await this.Clients.Group(groupName)
+                .UserInfo(connectedUserDto);
 
-        await this.Groups.AddToGroupAsync(this.Context.ConnectionId, groupName);
-        await this.Clients.Caller
-            .Lobby(ActiveLobbyMapper.Map(activeLobby));
+            await this.Groups.AddToGroupAsync(this.Context.ConnectionId, groupName);
+            await this.Clients.Caller
+                .Lobby(ActiveLobbyMapper.Map(activeLobby));
+        });
     }
 
     /// <inheritdoc />
@@ -114,14 +113,11 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
     /// <inheritdoc />
     public async Task DistributeGrenades(List<GrenadeAssignmentDto> grenadeAssignments)
     {
-        this.logger.LogInformation("Hello==?=");
         await this.Handle(async () =>
         {
             var activeLobby = this.lobbyManager
                 .GetActiveLobby(this.UserContext().LobbyId)
                     ?? throw new NullReferenceException("Lobby should always be here");
-
-            this.logger.LogInformation("{}", grenadeAssignments.First().UserId);
 
             var domainGrenadeAssignments = grenadeAssignments.Select(GrenadeMapper.Map);
             var result = this.lobbyStateMachine
@@ -132,16 +128,6 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
                 var dtoAssignments = result.Select(GrenadeMapper.Map);
                 await this.GetGroup(activeLobby).GrenadeAssignmentsReceived(dtoAssignments);
             }
-        });
-    }
-
-    /// <inheritdoc />
-    public async Task Message(string message)
-    {
-        await this.Handle(async () =>
-        {
-            await GetGroup()
-                .MessageReceieved(this.UserContext()!.User.Id, message);
         });
     }
 
@@ -159,28 +145,15 @@ public class LobbyHub : Hub<ILobbyClient>, ILobbyServer
         return this.Clients.Group(groupName);
     }
 
-    private void StructuredHubLog(Exception? exception, string description, LogLevel logLevel)
-    {
-        var context = this.UserContext();
-        this.logger.Log(
-            logLevel,
-            "{id} -> {user} >{description}< {exception}",
-            context.User.Id,
-            context.User.Name,
-            description,
-            exception);
-    }
-
     private async Task Handle(Func<Task> action)
     {
         try
         {
             await action();
-            this.StructuredHubLog(null, "action", LogLevel.Information);
         }
         catch (System.Exception e)
         {
-            this.StructuredHubLog(e, "unhandled exception", LogLevel.Critical);
+            this.logger.LogCritical(e, "unhandled exception in LobbyHub");
         }
     }
 }

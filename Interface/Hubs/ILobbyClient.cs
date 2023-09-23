@@ -17,14 +17,6 @@ public interface ILobbyClient
     Task Lobby(ActiveLobbyDto lobby);
 
     /// <summary>
-    /// Receieve message from another member of the lobby.
-    /// </summary>
-    /// <param name="sender">Userid for sender.</param>
-    /// <param name="message">String message.</param>
-    /// <returns>Task.</returns>
-    Task MessageReceieved(Guid sender, string message);
-
-    /// <summary>
     /// Receive grenades to throw from the igl.
     /// </summary>
     /// <param name="grenadeAssignments">List of grenade assignments.</param>

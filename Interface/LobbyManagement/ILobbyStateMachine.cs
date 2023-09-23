@@ -1,4 +1,5 @@
 using Domain.Lobby;
+using Domain.Entity;
 
 namespace Interface.LobbyManagement;
 
@@ -7,6 +8,22 @@ namespace Interface.LobbyManagement;
 /// </summary>
 public interface ILobbyStateMachine
 {
+    /// <summary>
+    /// Create and join a new lobby.
+    /// </summary>
+    /// <param name="lobbyAccess">Access object to create lobby from.</param>
+    /// <param name="joiner">Creator of the lobby.</param>
+    /// <returns></returns>
+    ActiveLobby CreateActiveLobby(LobbyAccess lobbyAccess, User joiner);
+
+    /// <summary>
+    /// Join an already existing lobby.
+    /// </summary>
+    /// <param name="activeLobby">Lobby to join.</param>
+    /// <param name="joiner">Joiner.</param>
+    /// <returns></returns>
+    ActiveLobby JoinActiveLobby(ActiveLobby activeLobby, User joiner);
+
     /// <summary>
     /// Alters the active lobby apropriatly and return the now offline metauser.
     /// </summary>

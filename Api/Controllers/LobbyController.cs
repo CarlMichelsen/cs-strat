@@ -1,5 +1,6 @@
 using Api.Extension;
 using Domain.Dto;
+using Domain.Configuration;
 using Interface.Handler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ namespace Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("[controller]")]
-[Authorize(Roles = "user")]
+[Authorize(Roles = ApplicationConstants.UserRole)]
 public class LobbyController : ControllerBase
 {
     private readonly ILobbyHandler lobbyHandler;

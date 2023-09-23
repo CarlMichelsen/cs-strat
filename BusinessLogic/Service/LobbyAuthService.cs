@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using BusinessLogic.Mapper;
-using Domain.Entity;
+using Domain.Configuration;
 using Domain.Exception;
 using Domain.Lobby;
 using Interface.LobbyManagement;
@@ -14,8 +14,6 @@ namespace BusinessLogic.Service;
 /// <inheritdoc />
 public class LobbyAuthService : ILobbyAuthService
 {
-    private const string LobbyIdQueryName = "lobbyId";
-
     private readonly ILogger<LobbyAuthService> logger;
     private readonly ILobbyAccessRepository lobbyAccessRepository;
     private readonly ILobbyManager lobbyManager;
@@ -41,6 +39,7 @@ public class LobbyAuthService : ILobbyAuthService
         ClaimsPrincipal? claimsPrincipal,
         IQueryCollection? queryCollection)
     {
+        this.logger.LogCritical("Connect");
         if (claimsPrincipal is null)
         {
             this.LogConnectionError("No claims");
@@ -92,14 +91,14 @@ public class LobbyAuthService : ILobbyAuthService
     {
         string? lobbyId = null;
 
-        if (queryCollection.TryGetValue(LobbyIdQueryName, out var lobbyIdStringValue))
+        if (queryCollection.TryGetValue(ApplicationConstants.LobbyIdQueryName, out var lobbyIdStringValue))
         {
             lobbyId = lobbyIdStringValue.FirstOrDefault();
         }
 
         if (string.IsNullOrWhiteSpace(lobbyId))
         {
-            throw new LobbyAuthException($"{LobbyIdQueryName} not found in query parameters");
+            throw new LobbyAuthException($"{ApplicationConstants.LobbyIdQueryName} not found in query parameters");
         }
 
         return lobbyId;

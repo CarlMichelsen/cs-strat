@@ -24,18 +24,6 @@ public class SignalRClientDocumentationController : ControllerBase, ILobbyClient
     }
 
     /// <summary>
-    /// This method is invoked when a new message is sent by a connected user.
-    /// </summary>
-    /// <param name="sender">Sender id.</param>
-    /// <param name="message">Message.</param>
-    /// <returns>Task.</returns>
-    [HttpPatch("/" + nameof(ILobbyClient.MessageReceieved))]
-    public Task MessageReceieved(Guid sender, string message)
-    {
-        throw new NotImplementedException("This method is for documentation purposes.");
-    }
-
-    /// <summary>
     /// This method is invoked when the igl distributes grenades to connected users.
     /// </summary>
     /// <param name="grenadeAssignments">Grenades to be assigned.</param>

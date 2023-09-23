@@ -3,12 +3,14 @@ using Api.Extension;
 using Api.Hubs;
 using Api.Middleware;
 using BusinessLogic.Database;
+using BusinessLogic.Factory;
 using BusinessLogic.LobbyManagement;
 using BusinessLogic.Handler;
 using BusinessLogic.Repository;
 using BusinessLogic.Service;
 using Domain.Configuration;
 using Interface.Handler;
+using Interface.Factory;
 using Interface.Repository;
 using Interface.LobbyManagement;
 using Interface.Service;
@@ -37,6 +39,10 @@ builder.Services
     .AddTransient<ILobbyAuthService, LobbyAuthService>()
     .AddSignalR();
 
+// Factories
+builder.Services
+    .AddScoped<ILobbyAuthServiceFactory, LobbyAuthServiceFactory>();
+
 // Lobby Management
 builder.Services
     .AddTransient<ILobbyStateMachine, LobbyStateMachine>()
@@ -48,7 +54,8 @@ builder.Services
 
 // Middleware
 builder.Services
-    .AddTransient<CookieMiddleware>();
+    .AddTransient<CookieMiddleware>()
+    .AddTransient<SignalRLobbyMiddleware>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGenWithXmlDocumentation(options =>
@@ -108,7 +115,7 @@ builder.Services
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("FrontendAllowed", corsBuilder =>
+    options.AddPolicy(ApplicationConstants.FrontendCorsPolicy, corsBuilder =>
     {
         var corsOptions = builder.Configuration.GetSection(CorsOptions.SectionName);
         var commaSeparatedOrigins = corsOptions[nameof(CorsOptions.WithOrigins)]
@@ -157,7 +164,7 @@ app.UseHttpsRedirection();
 
 app.UseRateLimiter();
 
-app.UseCors("FrontendAllowed");
+app.UseCors(ApplicationConstants.FrontendCorsPolicy);
 
 app.UseMiddleware<CookieMiddleware>();
 
@@ -165,8 +172,10 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.UseMiddleware<SignalRLobbyMiddleware>();
+
 app.MapControllers();
 
-app.MapHub<LobbyHub>("/LobbyHub");
+app.MapHub<LobbyHub>(ApplicationConstants.LobbySignalREndpoint);
 
 app.Run();

@@ -1,4 +1,3 @@
-using BusinessLogic.Mapper;
 using Domain.Entity;
 using Domain.Lobby;
 using Interface.LobbyManagement;
@@ -8,6 +7,18 @@ namespace BusinessLogic.LobbyManagement;
 /// <inheritdoc />
 public class LobbyManager : ILobbyManager
 {
+    private readonly ILobbyStateMachine lobbyStateMachine;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LobbyManager"/> class.
+    /// </summary>
+    /// <param name="lobbyStateMachine">Statemachine for mutating ActiveLobby.</param>
+    public LobbyManager(
+        ILobbyStateMachine lobbyStateMachine)
+    {
+        this.lobbyStateMachine = lobbyStateMachine;
+    }
+
     private static Dictionary<int, ActiveLobby> activeLobbies = new();
 
     /// <inheritdoc />
@@ -31,38 +42,14 @@ public class LobbyManager : ILobbyManager
             return default;
         }
 
-        if (lobby.Members.TryGetValue(joiner.Id, out var metaUser))
-        {
-            metaUser.Online = true;
-        }
-        else
-        {
-            lobby.Members.Add(joiner.Id, new MetaUser
-            {
-                Online = true,
-                User = joiner,
-                GrenadeAssignment = default,
-            });
-        }
-
-        return lobby;
+        return this.lobbyStateMachine.JoinActiveLobby(lobby, joiner);
     }
 
     /// <inheritdoc />
     public ActiveLobby InitiateActiveLobby(LobbyAccess lobbyAccess, User joiner)
     {
-        var activeLobby = ActiveLobbyMapper.Map(lobbyAccess);
-
-        var metaUser = new MetaUser
-        {
-            Online = true,
-            User = joiner,
-            GrenadeAssignment = default,
-        };
-        activeLobby.Members.Add(joiner.Id, metaUser);
-
+        var activeLobby = this.lobbyStateMachine.CreateActiveLobby(lobbyAccess, joiner);
         activeLobbies.Add(activeLobby.Id, activeLobby);
-
         return activeLobby;
     }
 }

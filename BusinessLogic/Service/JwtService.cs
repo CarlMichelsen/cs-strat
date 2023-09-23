@@ -29,10 +29,10 @@ public class JwtService : IJwtService
     {
         var sub = new ClaimsIdentity(new[]
         {
-            new Claim(ClaimTypes.Name, "user"),
+            new Claim(ClaimTypes.Name, ApplicationConstants.UserRole),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.GivenName, user.Name),
-            new Claim(ClaimTypes.Role, "user"),
+            new Claim(ClaimTypes.Role, ApplicationConstants.UserRole),
         });
 
         return this.GenerateToken(sub);
